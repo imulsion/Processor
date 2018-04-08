@@ -1,0 +1,56 @@
+
+	INSTRUCTION SET (5 bits per instruction)
+	
+	00000 - MOV R1,R2 //Copy R2 to R1
+	00001 - MOVI R1,x //x->R1
+	00010 - AND R1,R2 //R1=R1.R2
+	00011 - OR R1,R2 //R1 = OR(R1,R2)
+	00100 - NOT R1 //R1=~R1
+	00101 - RET //terminates the program
+	00110 - ADD R1,R2 //R1=R1+R2 signed
+	00111 - ADDI R1,x //R1=R1+x signed
+	01000 - SUB R1,R2 //R1=R2-R1 signed
+	01001 - SUBI R1,x //R1=R1-x signed
+	01010 - MUL R1,R2 //R1HL=R1*R2 signed - 16 bit result placed in R1(lower) and R1+1(higher)
+	01011 - DIV R1,R2 //R1 = round(R2/R1) signed
+	01100 - RJMP label //jump to label (relative)
+	01101 - CP R1,R2 //compare R1 to R2, unset zero flag if equal, set otherwise, set sign flag if R2<R1
+	01110 - CPI R1,x //compare R1 to x, unset zero if equal, set otherwise, set sign flag if x<R1
+	01111 - LOAD R1,ADD1 //load contents of RAM address ADD1 to R1
+	10000 - STORE ADD1,R1 //store contents of R1 at RAM address ADD1
+	10001 - BNE label //branch if zero flag not set
+	10010 - BREQ label //branch if zero flag set
+	10011 - BRLE label //branch if sign flag set
+	10100 - BRGE label //branch if sign flag not set
+	10101 - INC R1 //increment value in R1
+	10110 - DEC R1 //decrement value in R1
+	10111 - ADDL R1,R2 //R1 = R1+R2 (16 bits)
+	11000 - SUBL R1,R2 //R1 = R2-R1 (16 bits)
+	11001 - MOD R1,R2 //R1 = R2%R1
+	11010 - PRNT R1 //prints the value stored in R1 to the screen. Cheaty but I can't think how else to do it
+	11011 - ADC R1,R2 //R1=R1+R2 with carry bit
+	11100 - ADCL R1,R2 //R1=R1+R2 (16 bits) with carry
+	11101 - ASR R1 //arithmetic right shift R1<-R1
+	11110 - ASL R1 //arithmetic left shift R1<-R1
+	11111 - NOP //no operation
+
+
+
+	
+	INSTRUCTION FORMAT
+	[0 bit][opcode 5 bits][argument1 13 bits][argument2 13 bits]
+	-Each instruction takes up 4 bytes of memory
+
+	
+	
+	PROBLEMS FOR REPORT
+	-Forgot to include <array> leading to loads of errors
+	-Forward declaration crap with that memory pointer in byte
+	-mention all the problems with dependencies in memory and byte (ie byte operators had to access sreg)
+	-mention decisions regarding RAM size and instruction length
+	-bool& vs const bool& for the array access thing from the byte class
+	-Addition operator was subtracting because when harry told me to change it to += I was modifying data[i] which was then used by carry - needed a temp copy
+	-Optimisations by doing the whole += thing - no copies so more efficient code, also using const references so they're read only
+	-const corrected the operator[] function: allows compiler to optimise more freely, guarantees to compiler data wont be changed
+	-without const corrected operator[] compiler assumes it will change the data to be safe
+	-lots of stuff about const correctness and optimisation - code is now very efficient
