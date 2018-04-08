@@ -1,15 +1,17 @@
-#include "alu.h"
+#include "cpu.h"
 #include <fstream>
 
 int main()
 {
-	ALU alu;
+	CPU cpu;
 	std::cout<<"Welcome to Stafford King's processor emulation! Please type the file name (ending in .sbf) of the program you'd like to run!"<<std::endl;
 	std::string filename;
 	std::ifstream infile;
+	/*
 	std::array<bool,8> temp;
 	char inchar;
 	Byte lowmem(0),highmem(0); 
+	*/
 	while(true)
 	{
 		std::getline(std::cin,filename);
@@ -29,25 +31,17 @@ int main()
 			break;
 		}
 	}
-	while(!infile.eof())
+	std::string progdata((std::istreambuf_iterator<char>(infile)),(std::istreambuf_iterator<char>()));
+	if(!cpu.loadProgram(&progdata))//use pointer for large files
 	{
-		for(int i = 0;i<8;i++)
-		{
-			infile.get(inchar);
-			temp[i] = (inchar=='1')?1:0;
-		}
-		alu.writeRAM({highmem,lowmem},temp);
-		lowmem=lowmem+1;
-		if(lowmem.readCarry())
-		{
-			lowmem.setCarry(false);
-			highmem=highmem+1;
-		}
+		return -1;
 	}
-	//TODO file reading etc
-	//after this point program loaded into memory
+	else
+	{
+		//do execution here
+	}
 	
-	alu.execute();
+	
 	
 	return 0;
 }

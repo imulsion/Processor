@@ -48,7 +48,7 @@ void Byte::setData(std::array<bool,8> data)
 int Byte::toInt(bool type) const
 {
 	int sum=0;
-	if(type)
+	if(!type)
 	{
 		for(int i = 0;i<8;i++)
 		{

@@ -54,3 +54,7 @@
 	-const corrected the operator[] function: allows compiler to optimise more freely, guarantees to compiler data wont be changed
 	-without const corrected operator[] compiler assumes it will change the data to be safe
 	-lots of stuff about const correctness and optimisation - code is now very efficient
+	-word vs byte addressing
+	-stuff about mar and mdr
+	-optional for bus representing high impedance mode
+	
