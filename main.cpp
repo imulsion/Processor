@@ -7,17 +7,13 @@ int main()
 	std::cout<<"Welcome to Stafford King's processor emulation! Please type the file name (ending in .sbf) of the program you'd like to run!"<<std::endl;
 	std::string filename;
 	std::ifstream infile;
-	/*
-	std::array<bool,8> temp;
-	char inchar;
-	Byte lowmem(0),highmem(0); 
-	*/
+
 	while(true)
 	{
 		std::getline(std::cin,filename);
 		if(filename=="exit")
 		{
-			return -1;
+			return 0;
 		}
 		infile.open(filename);
 		if(!infile)
@@ -38,10 +34,8 @@ int main()
 	}
 	else
 	{
-		//do execution here
+		cpu.execute();
 	}
-	
-	
 	
 	return 0;
 }

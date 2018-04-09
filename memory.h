@@ -29,6 +29,7 @@ class Memory
 		void removeData();
 		const Byte& readMDR() const;
 		//const std::array<Byte,2>& readMAR() const;//ONLY use for debugging!
+		void readSomeData(int) const;//ONLY use for debugging!
 		
 };
 #endif //MEMORY_H

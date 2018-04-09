@@ -80,3 +80,7 @@ const std::array<Byte,2>& Memory::readMAR() const
 	return mar;
 }
 */
+void Memory::readSomeData(int i) const
+{
+	ram[i].printData();
+}
