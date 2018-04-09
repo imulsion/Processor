@@ -2,3 +2,5 @@ instructions.txt
 test.sbf
 main.exe
 memtest.cpp
+multest.cpp
+multest.exe

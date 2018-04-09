@@ -7,6 +7,7 @@ int main()
 	std::cout<<"Welcome to Stafford King's processor emulation! Please type the file name (ending in .sbf) of the program you'd like to run!"<<std::endl;
 	std::string filename;
 	std::ifstream infile;
+	std::string cleaneddata="";
 
 	while(true)
 	{
@@ -28,7 +29,14 @@ int main()
 		}
 	}
 	std::string progdata((std::istreambuf_iterator<char>(infile)),(std::istreambuf_iterator<char>()));
-	if(!cpu.loadProgram(&progdata))//use pointer for large files
+	for(int i = 0;i<progdata.length();i++)
+	{
+		if((progdata.at(i)=='1')||(progdata.at(i)=='0'))
+		{
+			cleaneddata.append(progdata.at(i));
+		}
+	}
+	if(!cpu.loadProgram(&cleaneddata))//use pointer for large files
 	{
 		return -1;
 	}

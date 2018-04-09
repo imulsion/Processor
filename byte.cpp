@@ -7,12 +7,14 @@ Byte::Byte()
 		data[i]=false;
 	}
 	carrybit=false;
+	carryin=false;
 }
 
 Byte::Byte(std::array<bool,8> data)
 {
 	this->data = data;
 	carrybit=false;
+	carryin=false;
 }
 Byte::Byte(int x)//quick initialiser for data x such that -128<x<127
 {
@@ -39,6 +41,7 @@ Byte::Byte(int x)//quick initialiser for data x such that -128<x<127
 		*this+=1;
 	}
 	carrybit=false;
+	carryin=false;
 }
 const std::array<bool,8>& Byte::getData() const
 {
@@ -75,7 +78,8 @@ Byte::operator[](int x) const
 
 Byte& Byte::operator+=(const Byte& a)
 {
-	bool carry = false;
+	bool carry = carryin;
+	carryin=false;
 	bool temp;
 	for(int i = 7;i>=0;i--)
 	{
@@ -86,14 +90,6 @@ Byte& Byte::operator+=(const Byte& a)
 	if(carry)
 	{
 		carrybit=true;
-	}
-	if(this->toInt(1)==0)
-	{
-		zerobit=true;
-	}
-	if(data[0])//if sign bit is set
-	{
-		signbit=true; 
 	}
 	return *this;
 }
@@ -116,10 +112,6 @@ Byte& Byte::operator&(Byte a)
 	{
 		data[i]=data[i]&&a[i];
 	}
-	if(this->toInt(1)==0)
-	{
-		zerobit=true;
-	}
 	return *this;
 }
 
@@ -129,32 +121,118 @@ Byte& Byte::operator|(Byte a)
 	{
 		data[i]=data[i]||a[i];
 	}
-	if(this->toInt(1)==0)
-	{
-		zerobit=true;
-	}
 	return *this;
 }
 
-Byte& Byte::operator~();
+Byte& Byte::operator~()
 {
 	for(int i = 0;i<8;i++)
 	{
 		data[i]=!data[i];
 	}
-	if(this->toInt(1)==0)
-	{
-		zerobit=true;
-	}
 	return *this;
+}
+
+
+Byte Byte::operator-(Byte a)
+{
+	Byte copy = a.convert();
+	return *this+=a;
+}
+
+Byte Byte::operator-(int x)
+{
+	return *this+=Byte(-x);
+}
+
+Byte Byte::operator<<(int x)
+{
+	for(int i=0;i<x;i++)
+	{
+		for(int j=0;j<7;j++)
+		{
+			data[j]=data[j+1];
+		}
+		data[7]=0;
+	}
+}
+
+Byte Byte::operator>>(int x)
+{
+	for(int i=0;i<x;i++)
+	{
+		for(int j=7;j>0;j++)
+		{
+			data[j]=data[j-1];
+		}
+		data[0]=0;
+	}
+}
+
+bool Byte::operator==(Byte a)
+{
+	for(int i = 0;i<8;i++)
+	{
+		if(data[i]!=a[i])
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Byte::operator==(int x)
+{
+	return *this==Byte(x);
+}
+
+std::array<Byte,2> Byte::operator*(Byte x)
+{
+	this->printData();
+	std::cout<<std::endl;
+	x.printData();
+	std::cout<<std::endl;
+	std::array<Byte,2> result = {Byte(0),Byte(0)};
+	std::array<std::array<bool,8>,2> shifting = {std::array<bool,8>{0,0,0,0,0,0,0,0},this->data};
+	for(int i = 7;i>=0;i--)
+	{
+		if(x[i])
+		{
+			result[1]=result[1]+Byte(shifting[1]);
+			if(result[1].readCarry())
+			{
+				result[1].setCarry(false);
+				result[0].setCarryIn(true);
+			}
+			result[0]=result[0]+Byte(shifting[0]);
+			
+		}
+		for(int j=0;j<2;j++)
+		{
+			for(int k =0;k<8;k++)
+			{
+				if(k==7&&j==0)
+				{
+					shifting[j][k]=shifting[j+1][0];
+				}
+				else if(k==7&&j==1)
+				{
+					shifting[j][k]=0;
+				}
+				else
+				{
+					shifting[j][k]=shifting[j][k+1];
+				}
+			}
+		}
+	}
+	return result;
 }
 
 const bool Byte::readCarry() const{return carrybit;}
 void Byte::setCarry(bool x){this->carrybit=x;}
-const bool Byte::readZero() const{return zerobit;}
-void Byte::setZero(bool x){this->zerobit=x;}
-const bool Byte::readSign() const{return signbit;}
-void Byte::setSign(bool x){this->signbit=x;}
+
+void Byte::setCarryIn(bool x){this->carryin=x;}
 
 void Byte::printData() const
 {
@@ -163,3 +241,11 @@ void Byte::printData() const
 		std::cout<<(data[i]?"1":"0");
 	}
 }
+
+Byte& Byte::convert() 
+{
+	*this=~*this;
+	*this=*this+1;
+	return *this;
+}
+
