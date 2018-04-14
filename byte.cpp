@@ -226,7 +226,7 @@ Byte Byte::operator>>(int x)
 {
 	for(int i=0;i<x;i++)
 	{
-		for(int j=7;j>0;j++)
+		for(int j=7;j>0;j--)
 		{
 			data[j]=data[j-1];
 		}

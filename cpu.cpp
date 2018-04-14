@@ -252,7 +252,7 @@ bool CPU::execute()
 				}
 				else
 				{
-					if(registers[arg1[1].toInt(1)]>registers[arg2[1].toInt(1)])
+					if(registers[arg2[1].toInt(1)]>registers[arg1[1].toInt(1)])
 					{
 						status = Byte({1,1,0,0,0,0,0,0});
 					}
@@ -387,9 +387,13 @@ bool CPU::execute()
 				{
 					registers[arg1[1].toInt(1)].printData();
 				}
-				else
+				else if(arg2[1].toInt(1)==1)
 				{
 					std::cout<<registers[arg1[1].toInt(1)].toInt(1);
+				}
+				else
+				{
+					std::cout<<registers[arg1[1].toInt(1)].toInt(1)+registers[arg1[1].toInt(1)+1].toInt(0);
 				}
 				std::cout<<std::endl;
 				optype=false;
@@ -432,6 +436,17 @@ bool CPU::execute()
 				registers[arg1[1].toInt(1)]<<arg2[1].toInt(1);
 				optype=false;
 				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
+				break;
+			case 31:
+				mem.placeData({registers[arg2[1].toInt(1)+1],registers[arg2[1].toInt(1)]});
+				mem.loadMAR();
+				mem.removeData();
+				mem.setCE(false);
+				mem.loadMDR();
+				mem.setCE(true);
+				registers[arg1[1].toInt(1)]=mem.readMDR();
+				optype=false;
+				clearSREG();
 				break;
 			default:
 				optype=false;
