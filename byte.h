@@ -36,8 +36,11 @@ class Byte
 		Byte operator<<(int);
 		Byte operator>>(int);
 		
-		bool operator==(Byte);
-		bool operator==(int);
+		bool operator==(Byte) const;
+		bool operator==(int) const;
+		
+		bool operator>(Byte) const;
+		bool operator>(int) const;
 		
 		std::array<Byte,2> operator*(Byte);
 		Byte operator/(Byte);

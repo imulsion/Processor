@@ -33,7 +33,7 @@ int main()
 	{
 		if((progdata.at(i)=='1')||(progdata.at(i)=='0'))
 		{
-			cleaneddata.append(progdata.at(i));
+			cleaneddata+=progdata.at(i);
 		}
 	}
 	if(!cpu.loadProgram(&cleaneddata))//use pointer for large files

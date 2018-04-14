@@ -4,14 +4,14 @@ CPU::CPU()
 {
 	for(int i=0;i<32;i++)
 	{
-		registers[i].setData({0,0,0,0,0,0,0,0});
+		registers[i]=Byte(0);
 	}
 	pc[0]=Byte(0);
 	pc[1]=Byte(0);
 	status=Byte(0);
 }
 
-std::array<Byte,2> CPU::create16(int x) const
+std::array<Byte,2> CPU::create16(int x) const//quick initialiser for 16 bit numbers
 {
 	std::array<std::array<bool,8>,2> temp = {std::array<bool,8>{0,0,0,0,0,0,0,0},std::array<bool,8>{0,0,0,0,0,0,0,0}};
 	int y = x;
@@ -43,7 +43,7 @@ std::array<Byte,2> CPU::create16(int x) const
 		Byte a(temp[1]);
 		Byte b(temp[0]);
 		a=a+1;
-		if(a.getCarry())
+		if(a.readCarry())
 		{
 			a.setCarry(false);
 			b=b+1;
@@ -61,7 +61,7 @@ const bool CPU::loadProgram(std::string* dataptr)
 {
 	if(dataptr->length()%32!=0)
 	{
-		std::cout<<"Error: One or more program instructions is the wrong length!"<<std::endl;
+		std::cout<<"Error: One or more program instructions is the wrong length! Current program length is "<<dataptr->length()<<std::endl;
 		return false;
 	}
 	
@@ -72,10 +72,8 @@ const bool CPU::loadProgram(std::string* dataptr)
 		for(int j = 0;j<8;j++)
 		{
 			temp[j]= dataptr->at((i*8)+j)=='1'?1:0;
-			std::cout<<temp[j];
 		}
-		std::cout<<std::endl;
-		mem.placeData({addresscounter[0],addresscounter[1]});
+		mem.placeData(addresscounter);
 		mem.loadMAR();
 		mem.placeData({Byte(0),temp});
 		mem.loadMDR();
@@ -84,6 +82,7 @@ const bool CPU::loadProgram(std::string* dataptr)
 		mem.setWE(false);
 		mem.setWE(true);
 		mem.setCE(true);
+		
 		addresscounter[1]=addresscounter[1]+1;
 		if(addresscounter[1].readCarry())
 		{
@@ -91,8 +90,6 @@ const bool CPU::loadProgram(std::string* dataptr)
 			addresscounter[0]=addresscounter[0]+1;
 		}
 	}
-
-	std::cout<<std::endl;
 	return true;
 }
 
@@ -106,6 +103,7 @@ bool CPU::execute()
 	std::array<Byte,2> temp;//temporary storage for 16-bit operations
 	bool isRunning = true;//detect program termination
 	bool optype = false;//8-bit or 16-bit operation?
+	
 	
 	while(true)//execution loop
 	{
@@ -147,6 +145,18 @@ bool CPU::execute()
 		arg2[0].setData({0,0,0,cInstr[2][3],cInstr[2][4],cInstr[2][5],cInstr[2][6],cInstr[2][7]});
 		arg2[1].setData({cInstr[3][0],cInstr[3][1],cInstr[3][2],cInstr[3][3],cInstr[3][4],cInstr[3][5],cInstr[3][6],cInstr[3][7]});
 		
+		
+		/*
+		//DEBUG
+		std::cout<<"Status register: ";
+		status.printData();
+		std::cout<<std::endl;
+		std::cout<<"Program counter: ";
+		pc[0].printData();
+		pc[1].printData();
+		std::cout<<std::endl;
+		//END
+		*/
 		/*
 		
 			;;;;;;;;;;;;;;;;;;;;;;
@@ -160,22 +170,27 @@ bool CPU::execute()
 			case 0:
 				registers[arg1[1].toInt(1)]=registers[arg2[1].toInt(1)];//only 32 registers so only need second half of address
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 1:
 				registers[arg1[1].toInt(1)]=arg2[1].toInt(1);
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 2:
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]&registers[arg2[1].toInt(1)];
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 3:
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]|registers[arg2[1].toInt(1)];
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 4:
 				registers[arg1[1].toInt(1)]=~registers[arg1[1].toInt(1)];
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 5:
 				if(stack.empty())
@@ -184,49 +199,86 @@ bool CPU::execute()
 				}
 				else
 				{
-					pc = stack.front();
-					stack.pop_back();
+					pc = stack.top();
+					stack.pop();
 				}
 				optype=false;
+				clearSREG();
 				break;
 			case 6:
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]+registers[arg2[1].toInt(1)];
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 7:
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]+arg2[1].toInt(1);
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 8:
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]-registers[arg2[1].toInt(1)];
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 9:
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]-arg2[1].toInt(1);
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 10:
 				temp=registers[arg1[1].toInt(1)]*registers[arg2[1].toInt(1)];
 				registers[arg1[1].toInt(1)]=temp[1];
 				registers[arg1[1].toInt(1)+1]=temp[0];
 				optype=true;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 11:
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]/registers[arg2[1].toInt(1)];
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 12:
-				stack.push_back(pc);
+				stack.push(pc);
 				pc[0]=arg1[0];
 				pc[1]=arg1[1];
 				optype=false;
+				clearSREG();
+				continue;
 				break;
 			case 13:
-				registers[arg1[1].toInt(1)]==registers[arg2[1].toInt(1)];
+				if(registers[arg1[1].toInt(1)]==registers[arg2[1].toInt(1)])
+				{
+					status=Byte(0);
+				}
+				else
+				{
+					if(registers[arg1[1].toInt(1)]>registers[arg2[1].toInt(1)])
+					{
+						status = Byte({1,1,0,0,0,0,0,0});
+					}
+					else
+					{
+						status = Byte({1,0,0,0,0,0,0,0});
+					}
+				}
 				optype=false;
 				break;
 			case 14:
-				registers[arg1[1].toInt(1)]==arg2[1].toInt(1);
+				if(registers[arg1[1].toInt(1)]==arg2[1].toInt(1))
+				{
+					status=Byte(0);
+				}
+				else
+				{
+					if(registers[arg1[1].toInt(1)]>arg2[1].toInt(1))
+					{
+						status = Byte({1,1,0,0,0,0,0,0});
+					}
+					else
+					{
+						status = Byte({1,0,0,0,0,0,0,0});
+					}
+				}
 				optype=false;
 				break;
 			case 15:
@@ -238,11 +290,12 @@ bool CPU::execute()
 				mem.setCE(true);
 				registers[arg1[1].toInt(1)]=mem.readMDR();
 				optype=false;
+				clearSREG();
 				break;
 			case 16:
 				mem.placeData(arg1);
 				mem.loadMAR();
-				mem.placeData(arg2);
+				mem.placeData({Byte(0),registers[arg2[1].toInt(1)]});
 				mem.loadMDR();
 				mem.removeData();
 				mem.setCE(false);
@@ -250,50 +303,57 @@ bool CPU::execute()
 				mem.setWE(true);
 				mem.setCE(true);
 				optype=false;
+				clearSREG();
 				break;
 			case 17:
-				if(!status[0])
-				{
-					stack.push_back(pc);
-					pc[0]=arg1[0];
-					pc[1]=arg1[1];
-				}
-				optype=false;
-				break;
-			case 18:
 				if(status[0])
 				{
-					stack.push_back(pc);
 					pc[0]=arg1[0];
 					pc[1]=arg1[1];
+					continue;
 				}
 				optype=false;
+				clearSREG();
+				break;
+			case 18:
+				if(!status[0])
+				{
+					pc[0]=arg1[0];
+					pc[1]=arg1[1];
+					continue;
+				}
+				optype=false;
+				clearSREG();
 				break;
 			case 19:
-				if(status[1])
+				if(!status[1])
 				{
-					stack.push_back(pc);
 					pc[0]=arg1[0];
 					pc[1]=arg1[1];
+					continue;
 				}
 				optype=false;
+				clearSREG();
 				break;
 			case 20:
 				if(status[1])
 				{
-					stack.push_back(pc);
 					pc[0]=arg1[0];
 					pc[1]=arg1[1];
+					continue;
 				}
 				optype=false;
+				clearSREG();
 				break;
 			case 21:
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]+1;
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 22:
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]-1;
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 23:
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]+registers[arg2[1].toInt(1)];
@@ -304,6 +364,7 @@ bool CPU::execute()
 				}
 				registers[arg1[1].toInt(1)+1]=registers[arg1[1].toInt(1)+1]+registers[arg2[1].toInt(1)+1];
 				optype=true;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 24:
 				registers[arg1[1].toInt(1)+1]=registers[arg1[1].toInt(1)+1]-registers[arg2[1].toInt(1)+1];
@@ -314,23 +375,38 @@ bool CPU::execute()
 				}
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]-registers[arg2[1].toInt(1)];
 				optype=true;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 25:
-				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]%registers[arg2[1].toInt(1)];
+				registers[arg1[1].toInt(1)]=registers[arg2[1].toInt(1)]%registers[arg1[1].toInt(1)];
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 26:
-				registers[arg1[1].toInt(1)].printData();
+				if(arg2[1].toInt(1)==0)
+				{
+					registers[arg1[1].toInt(1)].printData();
+				}
+				else
+				{
+					std::cout<<registers[arg1[1].toInt(1)].toInt(1);
+				}
 				std::cout<<std::endl;
 				optype=false;
+				clearSREG();
 				break;
 			case 27:
-				if(status[2])
-				{
-					registers[arg1[1].toInt(1)].setCarryIn(true);
-				}
-				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]+registers[arg2[1].toInt(1)];
+				mem.placeData({registers[arg1[1].toInt(1)+1],registers[arg1[1].toInt(1)]});
+				mem.loadMAR();
+				mem.placeData({Byte(0),registers[arg2[1].toInt(1)]});
+				mem.loadMDR();
+				mem.removeData();
+				mem.setCE(false);
+				mem.setWE(false);
+				mem.setWE(true);
+				mem.setCE(true);
 				optype=false;
+				clearSREG();
 				break;
 			case 28:
 				if(status[2])
@@ -345,29 +421,42 @@ bool CPU::execute()
 				}
 				registers[arg1[1].toInt(1)+1]=registers[arg1[1].toInt(1)+1]+registers[arg2[1].toInt(1)+1];
 				optype=true;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
+				break;
 			case 29:
 				registers[arg1[1].toInt(1)]>>arg2[1].toInt(1);
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 30:
 				registers[arg1[1].toInt(1)]<<arg2[1].toInt(1);
 				optype=false;
+				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			default:
 				optype=false;
+				clearSREG();
 				break;
 		}
-		updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
+		
+		
 		if(!isRunning)
 		{
-			break;
+			return true;
 		}
 		
+		//increment PC
+		pc[1]=pc[1]+1;
+		if(pc[1].readCarry())
+		{
+			pc[1].setCarry(false);
+			pc[0]=pc[0]+1;
+		}
 	}
 
 }
 
-std::array<Byte,2>& CPU::convertToWordAddress(std::array<Byte,2> pc)
+std::array<Byte,2> CPU::convertToWordAddress(std::array<Byte,2> pc)
 {
 	std::array<std::array<bool,8>,2> temp={std::array<bool,8>{0,0,0,0,0,0,0,0},std::array<bool,8>{0,0,0,0,0,0,0,0}};
 	for(int c=0;c<6;c++)
@@ -378,6 +467,7 @@ std::array<Byte,2>& CPU::convertToWordAddress(std::array<Byte,2> pc)
 	temp[0][7]=pc[1][1];
 	temp[0][6]=pc[1][0];
 	std::array<Byte,2> tempbyte = {Byte(temp[0]),Byte(temp[1])};
+	return tempbyte;
 }
 
 void CPU::updateSREG(Byte* x,Byte* y,bool type)
@@ -416,3 +506,7 @@ void CPU::updateSREG(Byte* x,Byte* y,bool type)
 	status = Byte(temp);
 }
 
+void CPU::clearSREG()
+{
+	status=Byte(0);
+}

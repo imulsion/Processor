@@ -16,33 +16,97 @@ Byte::Byte(std::array<bool,8> data)
 	carrybit=false;
 	carryin=false;
 }
-Byte::Byte(int x)//quick initialiser for data x such that -128<x<127
+Byte::Byte(int x)//quick initialiser for data x such that -128<x<256
 {
-	int y = x;
-	x=abs(x);
-	for(int i = 0;i<8;i++)
+	if(x<128)
 	{
-		if(x<pow(2,7-i))
+		int y = x;
+		x=abs(x);
+		data[0]=0;
+		for(int i = 1;i<8;i++)
 		{
-			data[i]=false;
+			if(x<pow(2,7-i))
+			{
+				data[i]=false;
+			}
+			else
+			{
+				data[i]=true;
+				x-=pow(2,7-i);
+			}
 		}
-		else
+		if(y<0)//flip bits and add 1 for two's complement
 		{
-			data[i]=true;
-			x-=pow(2,7-i);
+			*this=~*this;
+			*this+=1;
 		}
 	}
-	if(y<0)//flip bits and add 1 for two's complement
+	else
 	{
-		for(int j = 0;j<8;j++)
+		for(int i = 0;i<8;i++)
 		{
-			data[j] = !data[j];
+			if(x<pow(2,7-i))
+			{
+				data[i]=false;
+			}
+			else
+			{
+				data[i]=true;
+				x-=pow(2,7-i);
+			}
 		}
-		*this+=1;
 	}
 	carrybit=false;
 	carryin=false;
 }
+/*
+std::array<Byte,2> create16(int x)//quick initialiser for 16 bit numbers
+{
+	std::array<std::array<bool,8>,2> temp = {std::array<bool,8>{0,0,0,0,0,0,0,0},std::array<bool,8>{0,0,0,0,0,0,0,0}};
+	int y = x;
+	x=abs(x);
+	for(int i = 0;i<2;i++)
+	{
+		for(int j =0;j<8;j++)
+		{
+			if(x<pow(2,15-(i+j)))
+			{
+				temp[i][j]=false;
+			}
+			else
+			{
+				temp[i][j]=true;
+				x-=pow(2,15-(i+j));
+			}
+		}
+	}
+	if(y<0)//flip bits and add 1 for two's complement
+	{
+		for(int k = 0;k<2;k++)
+		{
+			for(int l =0;l<8;l++)
+			{
+				temp[k][l]=!temp[k][l];
+			}
+		}
+		Byte a(temp[1]);
+		Byte b(temp[0]);
+		a=a+1;
+		if(a.readCarry())
+		{
+			a.setCarry(false);
+			b=b+1;
+		}
+		return std::array<Byte,2>{b,a};
+	}
+	else
+	{
+		return std::array<Byte,2>{temp[0],temp[1]};
+	}
+}
+*/
+
+
 const std::array<bool,8>& Byte::getData() const
 {
 	return data;
@@ -102,7 +166,8 @@ Byte Byte::operator+(Byte a)
 
 Byte Byte::operator+(int x)
 {
-	return (*this)+Byte(x);
+	Byte copy = *this;
+	return copy+=Byte(x);
 }
 
 
@@ -169,7 +234,7 @@ Byte Byte::operator>>(int x)
 	}
 }
 
-bool Byte::operator==(Byte a)
+bool Byte::operator==(Byte a) const
 {
 	for(int i = 0;i<8;i++)
 	{
@@ -181,17 +246,44 @@ bool Byte::operator==(Byte a)
 	return true;
 }
 
-bool Byte::operator==(int x)
+bool Byte::operator==(int x) const
 {
 	return *this==Byte(x);
 }
 
+bool Byte::operator>(Byte x) const
+{
+	for(int i = 0;i<7;i++)
+	{
+		if(x[i]!=data[i])
+		{
+			if(x[i])
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool Byte::operator>(int x) const
+{
+	return *this>Byte(x);
+}
+
+
 std::array<Byte,2> Byte::operator*(Byte x)
 {
+	/*
 	this->printData();
 	std::cout<<std::endl;
 	x.printData();
 	std::cout<<std::endl;
+	*/
 	std::array<Byte,2> result = {Byte(0),Byte(0)};
 	std::array<std::array<bool,8>,2> shifting = {std::array<bool,8>{0,0,0,0,0,0,0,0},this->data};
 	for(int i = 7;i>=0;i--)
@@ -228,6 +320,48 @@ std::array<Byte,2> Byte::operator*(Byte x)
 	}
 	return result;
 }
+
+Byte Byte::operator/(Byte x)
+{
+	Byte count(0);
+	Byte div = *this;
+	bool sign=div[0];
+	while(true)
+	{
+		div=div-x;
+		if(sign==0&&div[0]==1)
+		{
+			break;
+		}
+		else
+		{
+			sign = div[0];
+			count=count+1;
+		}
+	}
+	return count;
+}
+
+Byte Byte::operator%(Byte x)
+{
+	Byte temp(0);
+	bool sign = data[0];
+	while(true)
+	{
+		*this=*this-x;
+		if(sign==0&&data[0]==1)
+		{
+			break;
+		}
+		else
+		{
+			temp=*this;
+			sign = data[0];
+		}
+	}
+	return temp;
+}
+
 
 const bool Byte::readCarry() const{return carrybit;}
 void Byte::setCarry(bool x){this->carrybit=x;}
