@@ -1,0 +1,10 @@
+MOVI R0,0
+
+loop:
+MOV R1,R0
+MUL R1,R1
+PRNT R1,2
+INC R0
+CPI R0,100
+BNE loop
+RET

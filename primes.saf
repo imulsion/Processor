@@ -1,0 +1,83 @@
+PRNT 2,3
+PRNT 3,3 ;2 and 3 are both primes
+MOVI R0,5
+MOVI R1,0
+MOVI R2,3
+MOVI R3,0
+
+MOVI R17,2 ;Use for increments
+
+MOVI R25,128 ;Use for OR masking
+
+loop1:
+MOV R4,R0
+MOV R5,R1
+MOV R6,R2
+MOV R7,R3
+
+sub:
+SUBL R4,R6
+SBRN R5,0
+JMP maybeprime;jump if MSB of R5 is set (meaning subtraction resulted in R4R5<0)
+CPI R5,0
+BREQ test
+JMP sub
+
+test:
+CPI R4,0
+BREQ notprime
+JMP sub
+
+maybeprime:
+MOV R10,R0
+MOV R11,R1
+ASR R10,1
+SBRN R11,7
+OR R10,R25
+ASR R11,1
+CP R2,R10
+BRSN test2
+JMP increment
+
+increment:
+ADDL R2,R17
+CP R2,R0
+BNE loop1
+CP R1,R3
+BNE loop1
+JMP prime
+
+notprime:
+ADDL R0,R17
+CPI R1,3
+BREQ test3
+JMP return
+
+return:
+MOVI R2,3
+MOVI R3,0
+JMP loop1
+
+test2:
+CP R3,R11
+BREQ prime
+JMP increment
+
+test3:
+CPI R0,231
+BREQ end
+JMP return
+
+prime:
+PRNT R0,2
+JMP notprime
+
+end:
+RET
+
+
+
+
+
+
+

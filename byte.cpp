@@ -201,13 +201,13 @@ Byte& Byte::operator~()
 
 Byte Byte::operator-(Byte a)
 {
-	Byte copy = a.convert();
-	return *this+=a;
+	Byte copy = a.invert();
+	return *this+copy;
 }
 
 Byte Byte::operator-(int x)
 {
-	return *this+=Byte(-x);
+	return *this+Byte(-x);
 }
 
 Byte Byte::operator<<(int x)
@@ -253,17 +253,45 @@ bool Byte::operator==(int x) const
 
 bool Byte::operator>(Byte x) const
 {
-	for(int i = 0;i<7;i++)
+	if(x[0]==1&&data[0]==0)
 	{
-		if(x[i]!=data[i])
+		return true;
+	}
+	if(x[0]==0&&data[0]==1)
+	{
+		return false;
+	}
+	if(x[0]&&data[0])
+	{
+		for(int i = 1;i<8;i++)
 		{
-			if(x[i])
+			if(x[i]!=data[i])
 			{
-				return false;
+				if(x[i])
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
-			else
+		}
+	}
+	else
+	{
+		for(int i = 1;i<8;i++)
+		{
+			if(x[i]!=data[i])
 			{
-				return true;
+				if(x[i])
+				{
+					return false;
+				}
+				else
+				{
+					return true;
+				}
 			}
 		}
 	}
@@ -278,12 +306,6 @@ bool Byte::operator>(int x) const
 
 std::array<Byte,2> Byte::operator*(Byte x)
 {
-	/*
-	this->printData();
-	std::cout<<std::endl;
-	x.printData();
-	std::cout<<std::endl;
-	*/
 	std::array<Byte,2> result = {Byte(0),Byte(0)};
 	std::array<std::array<bool,8>,2> shifting = {std::array<bool,8>{0,0,0,0,0,0,0,0},this->data};
 	for(int i = 7;i>=0;i--)
@@ -376,10 +398,9 @@ void Byte::printData() const
 	}
 }
 
-Byte& Byte::convert() 
+Byte Byte::invert() 
 {
-	*this=~*this;
-	*this=*this+1;
-	return *this;
+	Byte ret = *this;
+	return ~ret;
 }
 

@@ -7,9 +7,10 @@
 class CPU
 {
 	private:
-		std::array<Byte,32> registers;//CPU general purpose registers
+		std::array<Byte,32> registers;//CPU general purpose registers. registers[31] is the status register - DO NOT OVERWRITE
+		//status register: Format ZXCV: Zero[0],sign[1],carry[2]. Bits 3 through 7 are unused
+		
 		Memory mem;//RAM module
-		Byte status;//status register: Format ZXCV: Zero[0],sign[1],carry[2]. Bits 3 through 7 are unused
 		std::array<Byte,2> pc;//Program counter
 		std::stack<std::array<Byte,2>> stack;//call stack for branching
 		

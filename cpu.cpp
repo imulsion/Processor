@@ -8,7 +8,7 @@ CPU::CPU()
 	}
 	pc[0]=Byte(0);
 	pc[1]=Byte(0);
-	status=Byte(0);
+	registers[31]=Byte(0);
 }
 
 std::array<Byte,2> CPU::create16(int x) const//quick initialiser for 16 bit numbers
@@ -130,7 +130,13 @@ bool CPU::execute()
 			//increment word address to address next byte of instruction
 			wordAddress[1]=wordAddress[1]+1;
 		}
-		
+		if(!stack.empty())
+		{
+			if(pc==stack.top())
+			{
+				stack.pop();//if program is looping don't endlessly fill up the stack
+			}
+		}
 		/*
 		
 			;;;;;;;;;;;;;;;;;;;;;
@@ -139,24 +145,31 @@ bool CPU::execute()
 			
 		*/
 		
-		opcode.setData({0,0,0,cInstr[0][1],cInstr[0][2],cInstr[0][3],cInstr[0][4],cInstr[0][5]});
+		opcode.setData({0,0,cInstr[0][0],cInstr[0][1],cInstr[0][2],cInstr[0][3],cInstr[0][4],cInstr[0][5]});
 		arg1[0].setData({0,0,0,cInstr[0][6],cInstr[0][7],cInstr[1][0],cInstr[1][1],cInstr[1][2]});
 		arg1[1].setData({cInstr[1][3],cInstr[1][4],cInstr[1][5],cInstr[1][6],cInstr[1][7],cInstr[2][0],cInstr[2][1],cInstr[2][2]});
 		arg2[0].setData({0,0,0,cInstr[2][3],cInstr[2][4],cInstr[2][5],cInstr[2][6],cInstr[2][7]});
 		arg2[1].setData({cInstr[3][0],cInstr[3][1],cInstr[3][2],cInstr[3][3],cInstr[3][4],cInstr[3][5],cInstr[3][6],cInstr[3][7]});
 		
-		
 		/*
 		//DEBUG
-		std::cout<<"Status register: ";
-		status.printData();
-		std::cout<<std::endl;
-		std::cout<<"Program counter: ";
-		pc[0].printData();
-		pc[1].printData();
-		std::cout<<std::endl;
+		if(registers[1].toInt(0)+registers[0].toInt(1)==1000)
+		{
+			std::cout<<"On line "<<pc[1].toInt(1)+1<<":"<<std::endl;
+			std::cout<<"Data: "<<std::endl;
+			for(int i = 0;i<12;i++)
+			{
+				std::cout<<"R"<<i<<": ";
+				registers[i].printData();
+				std::cout<<std::endl;
+			}
+			std::cout<<"Status register: ";
+			registers[31].printData();
+			std::cout<<std::endl<<std::endl;
+		}
 		//END
 		*/
+		
 		/*
 		
 			;;;;;;;;;;;;;;;;;;;;;;
@@ -196,12 +209,10 @@ bool CPU::execute()
 				if(stack.empty())
 				{
 					isRunning=false;
+					break;
 				}
-				else
-				{
-					pc = stack.top();
-					stack.pop();
-				}
+				pc = stack.top();
+				stack.pop();
 				optype=false;
 				clearSREG();
 				break;
@@ -238,7 +249,6 @@ bool CPU::execute()
 				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 12:
-				stack.push(pc);
 				pc[0]=arg1[0];
 				pc[1]=arg1[1];
 				optype=false;
@@ -248,17 +258,17 @@ bool CPU::execute()
 			case 13:
 				if(registers[arg1[1].toInt(1)]==registers[arg2[1].toInt(1)])
 				{
-					status=Byte(0);
+					registers[31]=Byte(0);
 				}
 				else
 				{
 					if(registers[arg2[1].toInt(1)]>registers[arg1[1].toInt(1)])
 					{
-						status = Byte({1,1,0,0,0,0,0,0});
+						registers[31] = Byte({1,1,0,0,0,0,0,0});
 					}
 					else
 					{
-						status = Byte({1,0,0,0,0,0,0,0});
+						registers[31] = Byte({1,0,0,0,0,0,0,0});
 					}
 				}
 				optype=false;
@@ -266,17 +276,17 @@ bool CPU::execute()
 			case 14:
 				if(registers[arg1[1].toInt(1)]==arg2[1].toInt(1))
 				{
-					status=Byte(0);
+					registers[31]=Byte(0);
 				}
 				else
 				{
 					if(registers[arg1[1].toInt(1)]>arg2[1].toInt(1))
 					{
-						status = Byte({1,1,0,0,0,0,0,0});
+						registers[31] = Byte({1,1,0,0,0,0,0,0});
 					}
 					else
 					{
-						status = Byte({1,0,0,0,0,0,0,0});
+						registers[31] = Byte({1,0,0,0,0,0,0,0});
 					}
 				}
 				optype=false;
@@ -306,7 +316,7 @@ bool CPU::execute()
 				clearSREG();
 				break;
 			case 17:
-				if(status[0])
+				if(registers[31][0])
 				{
 					pc[0]=arg1[0];
 					pc[1]=arg1[1];
@@ -316,7 +326,7 @@ bool CPU::execute()
 				clearSREG();
 				break;
 			case 18:
-				if(!status[0])
+				if(!registers[31][0])
 				{
 					pc[0]=arg1[0];
 					pc[1]=arg1[1];
@@ -326,7 +336,7 @@ bool CPU::execute()
 				clearSREG();
 				break;
 			case 19:
-				if(!status[1])
+				if(!registers[31][1])
 				{
 					pc[0]=arg1[0];
 					pc[1]=arg1[1];
@@ -336,7 +346,7 @@ bool CPU::execute()
 				clearSREG();
 				break;
 			case 20:
-				if(status[1])
+				if(registers[31][1])
 				{
 					pc[0]=arg1[0];
 					pc[1]=arg1[1];
@@ -367,13 +377,13 @@ bool CPU::execute()
 				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 24:
-				registers[arg1[1].toInt(1)+1]=registers[arg1[1].toInt(1)+1]-registers[arg2[1].toInt(1)+1];
-				if(registers[arg1[1].toInt(1)+1].readCarry())
-				{
-					registers[arg1[1].toInt(1)+1].setCarry(false);
-					registers[arg1[1].toInt(1)].setCarryIn(true);
-				}
+				registers[arg1[1].toInt(1)].setCarryIn(true);
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]-registers[arg2[1].toInt(1)];
+				if(registers[arg1[1].toInt(1)].readCarry())
+				{
+					registers[arg1[1].toInt(1)+1].setCarryIn(true);
+				}
+				registers[arg1[1].toInt(1)+1]=registers[arg1[1].toInt(1)+1]-registers[arg2[1].toInt(1)+1];
 				optype=true;
 				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
@@ -391,9 +401,13 @@ bool CPU::execute()
 				{
 					std::cout<<registers[arg1[1].toInt(1)].toInt(1);
 				}
-				else
+				else if(arg2[1].toInt(1)==2)
 				{
 					std::cout<<registers[arg1[1].toInt(1)].toInt(1)+registers[arg1[1].toInt(1)+1].toInt(0);
+				}
+				else
+				{
+					std::cout<<arg1[1].toInt(1);
 				}
 				std::cout<<std::endl;
 				optype=false;
@@ -413,7 +427,7 @@ bool CPU::execute()
 				clearSREG();
 				break;
 			case 28:
-				if(status[2])
+				if(registers[31][2])
 				{
 					registers[arg1[1].toInt(1)].setCarryIn(true);
 				}
@@ -446,6 +460,39 @@ bool CPU::execute()
 				mem.setCE(true);
 				registers[arg1[1].toInt(1)]=mem.readMDR();
 				optype=false;
+				clearSREG();
+				break;
+			case 32:
+				if(registers[arg1[1].toInt(1)][arg2[1].toInt(1)])
+				{
+					pc[1]=pc[1]+1;
+					if(pc[1].readCarry())
+					{
+						pc[1].setCarry(false);
+						pc[0]=pc[0]+1;
+					}
+				}
+				optype=false;
+				clearSREG();
+				break;
+			case 33:
+				if(!registers[arg1[1].toInt(1)][arg2[1].toInt(1)])
+				{
+					pc[1]=pc[1]+1;
+					if(pc[1].readCarry())
+					{
+						pc[1].setCarry(false);
+						pc[0]=pc[0]+1;
+					}
+				}
+				optype=false;
+				clearSREG();
+				break;
+			case 34:
+				stack.push(pc);
+				pc[0]=arg1[0];
+				pc[1]=arg1[1];
+				optype = false;
 				clearSREG();
 				break;
 			default:
@@ -517,11 +564,14 @@ void CPU::updateSREG(Byte* x,Byte* y,bool type)
 		{
 			temp[2]=true;
 		}
+		y->setCarry(false);
 	}
-	status = Byte(temp);
+	x->setCarry(false);
+	
+	registers[31] = Byte(temp);
 }
 
 void CPU::clearSREG()
 {
-	status=Byte(0);
+	registers[31]=Byte(0);
 }

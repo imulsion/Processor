@@ -18,8 +18,7 @@ class Byte
 		const std::array<bool,8>& getData() const;
 		void setData(std::array<bool,8> data);
 		int toInt(bool) const;
-		Byte& convert();//helper function to convert a byte to its negative equivalent in two's complement
-		
+		Byte invert();//helper function to invert a byte
 		operator[](int) const;
 		Byte& operator+=(const Byte&);
 		Byte operator+(Byte);
@@ -45,6 +44,7 @@ class Byte
 		std::array<Byte,2> operator*(Byte);
 		Byte operator/(Byte);
 		Byte operator%(Byte);
+
 		
 		const bool readCarry() const;
 		void setCarry(bool);
