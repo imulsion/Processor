@@ -2,6 +2,7 @@
 
 Byte::Byte()
 {
+	//set all data to 0
 	for(int i = 0;i<8;i++)
 	{
 		data[i]=false;
@@ -12,18 +13,19 @@ Byte::Byte()
 
 Byte::Byte(std::array<bool,8> data)
 {
+	//construct object with supplied data
 	this->data = data;
 	carrybit=false;
 	carryin=false;
 }
 Byte::Byte(int x)//quick initialiser for data x such that -128<x<256
 {
-	if(x<128)
+	if(x<128)//for signed numbers
 	{
 		int y = x;
 		x=abs(x);
 		data[0]=0;
-		for(int i = 1;i<8;i++)
+		for(int i = 1;i<8;i++)//convert to binary
 		{
 			if(x<pow(2,7-i))
 			{
@@ -41,7 +43,7 @@ Byte::Byte(int x)//quick initialiser for data x such that -128<x<256
 			*this+=1;
 		}
 	}
-	else
+	else//for unsigned numbers
 	{
 		for(int i = 0;i<8;i++)
 		{
@@ -59,54 +61,9 @@ Byte::Byte(int x)//quick initialiser for data x such that -128<x<256
 	carrybit=false;
 	carryin=false;
 }
-/*
-std::array<Byte,2> create16(int x)//quick initialiser for 16 bit numbers
-{
-	std::array<std::array<bool,8>,2> temp = {std::array<bool,8>{0,0,0,0,0,0,0,0},std::array<bool,8>{0,0,0,0,0,0,0,0}};
-	int y = x;
-	x=abs(x);
-	for(int i = 0;i<2;i++)
-	{
-		for(int j =0;j<8;j++)
-		{
-			if(x<pow(2,15-(i+j)))
-			{
-				temp[i][j]=false;
-			}
-			else
-			{
-				temp[i][j]=true;
-				x-=pow(2,15-(i+j));
-			}
-		}
-	}
-	if(y<0)//flip bits and add 1 for two's complement
-	{
-		for(int k = 0;k<2;k++)
-		{
-			for(int l =0;l<8;l++)
-			{
-				temp[k][l]=!temp[k][l];
-			}
-		}
-		Byte a(temp[1]);
-		Byte b(temp[0]);
-		a=a+1;
-		if(a.readCarry())
-		{
-			a.setCarry(false);
-			b=b+1;
-		}
-		return std::array<Byte,2>{b,a};
-	}
-	else
-	{
-		return std::array<Byte,2>{temp[0],temp[1]};
-	}
-}
-*/
 
 
+//getters and setters
 const std::array<bool,8>& Byte::getData() const
 {
 	return data;
@@ -115,6 +72,8 @@ void Byte::setData(std::array<bool,8> data)
 {
 	this->data=data;
 }
+
+//convert data to int
 int Byte::toInt(bool type) const
 {
 	int sum=0;
@@ -135,18 +94,21 @@ int Byte::toInt(bool type) const
 	return sum;
 }
 
+//data access override
 Byte::operator[](int x) const
 {
 	return data[x];
 }
 
+//addition operator
 Byte& Byte::operator+=(const Byte& a)
 {
 	bool carry = carryin;
-	carryin=false;
-	bool temp;
+	carryin=false;//read then reset carry in
+	bool temp;//temporary data storage as both data and carry rely on current data bit
 	for(int i = 7;i>=0;i--)
 	{
+		//logical full adder
 		temp = data[i];
 		data[i]=data[i]^a[i]^carry;
 		carry=(temp&&a[i])||(carry&&(a[i]^temp));
@@ -158,6 +120,7 @@ Byte& Byte::operator+=(const Byte& a)
 	return *this;
 }
 
+//more efficient addition 
 Byte Byte::operator+(Byte a)
 {
 	Byte copy = *this;
@@ -170,7 +133,7 @@ Byte Byte::operator+(int x)
 	return copy+=Byte(x);
 }
 
-
+//logical AND
 Byte& Byte::operator&(Byte a)
 {
 	for(int i = 0;i<8;i++)
@@ -180,6 +143,7 @@ Byte& Byte::operator&(Byte a)
 	return *this;
 }
 
+//logical OR
 Byte& Byte::operator|(Byte a)
 {
 	for(int i = 0;i<8;i++)
@@ -189,6 +153,7 @@ Byte& Byte::operator|(Byte a)
 	return *this;
 }
 
+//logical NOT
 Byte& Byte::operator~()
 {
 	for(int i = 0;i<8;i++)
@@ -198,7 +163,7 @@ Byte& Byte::operator~()
 	return *this;
 }
 
-
+//subtraction - invert the bits (carry in set by CPU)
 Byte Byte::operator-(Byte a)
 {
 	Byte copy = a.invert();
@@ -210,6 +175,7 @@ Byte Byte::operator-(int x)
 	return *this+Byte(-x);
 }
 
+//shift left x times
 Byte Byte::operator<<(int x)
 {
 	for(int i=0;i<x;i++)
@@ -222,6 +188,7 @@ Byte Byte::operator<<(int x)
 	}
 }
 
+//shift right x times
 Byte Byte::operator>>(int x)
 {
 	for(int i=0;i<x;i++)
@@ -233,12 +200,12 @@ Byte Byte::operator>>(int x)
 		data[0]=0;
 	}
 }
-
+//equality operators
 bool Byte::operator==(Byte a) const
 {
 	for(int i = 0;i<8;i++)
 	{
-		if(data[i]!=a[i])
+		if(data[i]!=a[i])//if any bit doesn't equal its counterpart, return false
 		{
 			return false;
 		}
@@ -251,8 +218,10 @@ bool Byte::operator==(int x) const
 	return *this==Byte(x);
 }
 
+//greater than operator
 bool Byte::operator>(Byte x) const
 {
+	//signed operation, so check out sign bits first
 	if(x[0]==1&&data[0]==0)
 	{
 		return true;
@@ -261,6 +230,7 @@ bool Byte::operator>(Byte x) const
 	{
 		return false;
 	}
+	//otherwise check remaining digits - whichever number has a 1 in the most significant position is the largest
 	if(x[0]&&data[0])
 	{
 		for(int i = 1;i<8;i++)
@@ -303,15 +273,16 @@ bool Byte::operator>(int x) const
 	return *this>Byte(x);
 }
 
-
+//multiplication - logical shift and add multiplier
 std::array<Byte,2> Byte::operator*(Byte x)
 {
 	std::array<Byte,2> result = {Byte(0),Byte(0)};
-	std::array<std::array<bool,8>,2> shifting = {std::array<bool,8>{0,0,0,0,0,0,0,0},this->data};
+	std::array<std::array<bool,8>,2> shifting = {std::array<bool,8>{0,0,0,0,0,0,0,0},this->data};//16 bit "register" to allow multiplicand to shift into 16 bits
 	for(int i = 7;i>=0;i--)
 	{
-		if(x[i])
+		if(x[i])//if bit in multiplicand set
 		{
+			//add shifted multiplicand
 			result[1]=result[1]+Byte(shifting[1]);
 			if(result[1].readCarry())
 			{
@@ -321,6 +292,7 @@ std::array<Byte,2> Byte::operator*(Byte x)
 			result[0]=result[0]+Byte(shifting[0]);
 			
 		}
+		//shift multiplicand
 		for(int j=0;j<2;j++)
 		{
 			for(int k =0;k<8;k++)
@@ -342,16 +314,16 @@ std::array<Byte,2> Byte::operator*(Byte x)
 	}
 	return result;
 }
-
+//division operator - works by successive subtraction. Implement better algorithm if possible
 Byte Byte::operator/(Byte x)
 {
 	Byte count(0);
 	Byte div = *this;
-	bool sign=div[0];
+	bool sign=div[0];//sign bit
 	while(true)
 	{
 		div=div-x;
-		if(sign==0&&div[0]==1)
+		if(sign==0&&div[0]==1)//check MSB to see if <0
 		{
 			break;
 		}
@@ -364,6 +336,7 @@ Byte Byte::operator/(Byte x)
 	return count;
 }
 
+//same as above but outputs remainder
 Byte Byte::operator%(Byte x)
 {
 	Byte temp(0);
@@ -384,12 +357,13 @@ Byte Byte::operator%(Byte x)
 	return temp;
 }
 
-
+//carry getters/setters
 const bool Byte::readCarry() const{return carrybit;}
 void Byte::setCarry(bool x){this->carrybit=x;}
 
 void Byte::setCarryIn(bool x){this->carryin=x;}
 
+//print byte to screen
 void Byte::printData() const
 {
 	for(int i =0;i<8;i++)
@@ -398,6 +372,7 @@ void Byte::printData() const
 	}
 }
 
+//returns a quick logical NOT for arithmetic
 Byte Byte::invert() 
 {
 	Byte ret = *this;

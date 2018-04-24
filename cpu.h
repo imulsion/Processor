@@ -1,4 +1,4 @@
-#ifndef CPU_H
+#ifndef CPU_H//header guard
 #define CPU_H
 #include "memory.h"
 #include "byte.h"
@@ -15,13 +15,13 @@ class CPU
 		std::stack<std::array<Byte,2>> stack;//call stack for branching
 		
 	public:
-		CPU();
-		const bool loadProgram(std::string*);
-		bool execute();
+		CPU();//constructor
+		const bool loadProgram(std::string*);//load machine code file to memory
+		const bool execute();//execute stored program
+		//update/clear status register - called once per cycle
 		void updateSREG(Byte*,Byte*,bool);
 		void clearSREG();
-		std::array<Byte,2> convertToWordAddress(std::array<Byte,2>);
-		std::array<Byte,2> create16(int) const;
+		std::array<Byte,2> convertToWordAddress(std::array<Byte,2>);//function to convert PC to a word address
 };
 
 #endif //CPU_H

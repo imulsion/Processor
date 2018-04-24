@@ -1,8 +1,6 @@
 instructions.txt
-test.sbf
 main.exe
 memtest.cpp
-test3.sbf
-test2.sbf
-firsttest.sbf
 compiler.exe
+subtest.saf
+subtest.sbf
