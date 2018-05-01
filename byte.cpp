@@ -167,12 +167,13 @@ Byte& Byte::operator~()
 Byte Byte::operator-(Byte a)
 {
 	Byte copy = a.invert();
+	//carryin=true;
 	return *this+copy;
 }
 
 Byte Byte::operator-(int x)
 {
-	return *this+Byte(-x);
+	return *this-Byte(x);
 }
 
 //shift left x times
@@ -314,6 +315,7 @@ std::array<Byte,2> Byte::operator*(Byte x)
 	}
 	return result;
 }
+
 //division operator - works by successive subtraction. Implement better algorithm if possible
 Byte Byte::operator/(Byte x)
 {
@@ -335,6 +337,35 @@ Byte Byte::operator/(Byte x)
 	}
 	return count;
 }
+
+/*
+Byte Byte::operator/(Byte x)
+{
+	Byte remainder(0);
+	Byte quotient(0);
+	int j;
+	for(j = 0;j<8;j++)
+	{
+		if(data[j])
+		{
+			break;
+		}
+	}
+	for(int i = 7-j;i>=0;i--)
+	{
+		remainder<<1;
+		if(data[7-i])
+		{
+			remainder = remainder|Byte(1);
+		}
+		if(remainder>x||remainder==x)
+		{
+			remainder=remainder-x;
+			quotient=quotient|Byte(pow(2,i));
+		}
+	}
+	return quotient;
+}*/
 
 //same as above but outputs remainder
 Byte Byte::operator%(Byte x)

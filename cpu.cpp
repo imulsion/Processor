@@ -50,8 +50,16 @@ const bool CPU::loadProgram(std::string* dataptr)
 	return true;//load successful
 }
 
-bool CPU::execute()
+const bool CPU::execute(std::string filename,std::optional<std::vector<int>> regnums)
 {
+	std::optional<std::ofstream> debugwriter={};
+	if(regnums.has_value())
+	{
+		std::sort(regnums.value().begin(),regnums.value().end());
+		debugwriter=std::ofstream(filename+".log");
+	}
+	
+	
 	std::array<Byte,4> cInstr;//current instruction
 	std::array<Byte,2> wordAddress;
 	Byte opcode;
@@ -102,24 +110,35 @@ bool CPU::execute()
 		arg2[0].setData({0,0,0,cInstr[2][3],cInstr[2][4],cInstr[2][5],cInstr[2][6],cInstr[2][7]});
 		arg2[1].setData({cInstr[3][0],cInstr[3][1],cInstr[3][2],cInstr[3][3],cInstr[3][4],cInstr[3][5],cInstr[3][6],cInstr[3][7]});
 		
-		/*
-		//DEBUG
-		if(registers[1].toInt(0)+registers[0].toInt(1)==1000)
+		
+		if(regnums.has_value())
 		{
-			std::cout<<"On line "<<pc[1].toInt(1)+1<<":"<<std::endl;
-			std::cout<<"Data: "<<std::endl;
-			for(int i = 0;i<12;i++)
+			debugwriter.value()<<"On instruction "<<pc[1].toInt(1)+1<<":\n";
+			debugwriter.value()<<"Data: \n";
+			for(int i = 0;i<regnums.value().size();i++)
 			{
-				std::cout<<"R"<<i<<": ";
-				registers[i].printData();
-				std::cout<<std::endl;
+				if(regnums.value()[i]>9)
+				{
+					debugwriter.value()<<"R"<<regnums.value()[i]<<": ";
+				}
+				else
+				{
+					debugwriter.value()<<"R"<<regnums.value()[i]<<":  ";
+				}
+				for(int j = 0;j<8;j++)
+				{
+					debugwriter.value()<<registers[regnums.value()[i]][j];
+				}
+				debugwriter.value()<<"\n";
 			}
-			std::cout<<"Status register: ";
-			registers[31].printData();
-			std::cout<<std::endl<<std::endl;
+			debugwriter.value()<<"Status register: ";
+			for(int j = 0;j<8;j++)
+			{
+				debugwriter.value()<<registers[31][j];
+			}
+			debugwriter.value()<<"\n\n";
 		}
-		//END
-		*/
+		
 		
 		/*
 		
@@ -179,11 +198,13 @@ bool CPU::execute()
 				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 8://SUB
+				registers[arg2[1].toInt(1)].setCarryIn(true);
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]-registers[arg2[1].toInt(1)];
 				optype=false;
 				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 9://SUBI
+				registers[arg1[1].toInt(1)].setCarryIn(true);
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]-arg2[1].toInt(1);
 				optype=false;
 				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
@@ -450,7 +471,7 @@ bool CPU::execute()
 				pc[1]=arg1[1];
 				optype = false;
 				clearSREG();
-				break;
+				continue;//don't increment PC again...
 			default: // Any other instruction counts as a NOP - no operation
 				optype=false;
 				clearSREG();

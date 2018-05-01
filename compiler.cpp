@@ -757,15 +757,37 @@ int main(int argc, char* argv[])
 		}
 		else if(instruction=="CALL")
 		{
-			result+="100010";
-			errchk = writeLine(args,1,true,linecount);
-			if(errchk=="")
+			result+="10001000000";
+			bool matchfound = false;
+			for(int i = 0;i<labels.size();i++)
 			{
-				return 0;
+				if(labels[i]==args)
+				{
+					matchfound=true;
+					//DEBUG 
+					std::cout<<labels[i]<<std::endl;
+					std::cout<<labelnumbers[i]<<std::endl;
+					//END
+					int num = labelnumbers[i];
+					for(int i = 0;i<8;i++)
+					{
+						if(num<pow(2,7-i))
+						{
+							result+="0";
+						}
+						else
+						{
+							result+="1";
+							num-=pow(2,7-i);
+						}
+					}
+					result+="0000000000000";
+					break;
+				}
 			}
-			else
+			if(!matchfound)
 			{
-				result+=errchk;
+				std::cout<<"Error on line "<<linecount<<": No match found for label"<<std::endl;
 			}
 		}
 		else//missing or non existent instruction

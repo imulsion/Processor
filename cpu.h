@@ -3,6 +3,9 @@
 #include "memory.h"
 #include "byte.h"
 #include <stack>
+#include <vector>
+#include <algorithm>
+#include <fstream>
 
 class CPU
 {
@@ -17,7 +20,7 @@ class CPU
 	public:
 		CPU();//constructor
 		const bool loadProgram(std::string*);//load machine code file to memory
-		const bool execute();//execute stored program
+		const bool execute(std::string fname="",std::optional<std::vector<int>> regnums={});//execute stored program
 		//update/clear status register - called once per cycle
 		void updateSREG(Byte*,Byte*,bool);
 		void clearSREG();

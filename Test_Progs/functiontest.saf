@@ -1,0 +1,17 @@
+MOVI R0,2
+MOVI R1,3
+CALL times
+MOVI R0,5
+MOVI R1,10
+CALL times
+MOVI R0,3
+MOVI R1,47
+CALL times
+RET
+
+
+
+times:
+MUL R0,R1
+PRNT R0,2
+RET

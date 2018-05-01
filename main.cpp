@@ -1,14 +1,20 @@
 #include "cpu.h"
-#include <fstream>
 
-int main()
+
+
+int main(int argc, char* argv[])
 {
+	
 	CPU cpu;
 	std::cout<<"Welcome to Stafford King's processor emulation! Please type the file name (ending in .sbf) of the program you'd like to run! Or type \"exit\" to exit."<<std::endl;
 	std::string filename;
 	std::ifstream infile;
 	std::string cleaneddata="";
-
+	std::size_t split;
+	std::vector<int> regs;
+	std::string temp;
+	bool loop=false;
+	
 	while(true)//loop input data
 	{
 		std::getline(std::cin,filename);
@@ -42,7 +48,109 @@ int main()
 	}
 	else
 	{
-		cpu.execute();//run the program
+		if(argc>1)
+		{
+			std::string dcheck(argv[1]);//enable debug mode?
+			if(dcheck == "-debug")
+			{
+				if(argc==2)
+				{
+					std::cout<<"Error: Debug mode selected but register range not specified"<<std::endl;
+					return 0;
+				}
+				std::string regnums(argv[2]);
+				if(regnums.find(',')==std::string::npos)
+				{
+					if(regnums.find('-')==std::string::npos)
+					{
+						try
+						{
+							regs.push_back(std::stoi(regnums));
+						}
+						catch(const std::invalid_argument& e)
+						{
+							std::cout<<"Error 1: Register range specified in invalid format. Use , to separate values and - to indicate a range."<<std::endl;
+							return 0;
+						}
+					}
+					else
+					{
+						split = regnums.find('-');
+						try
+						{
+							for(int i = std::stoi(regnums.substr(0,split));i<std::stoi(regnums.substr(split));i++)
+							{
+								regs.push_back(i);
+							}
+						}
+						catch(const std::invalid_argument& e)
+						{
+							std::cout<<"Error 2: Register range specified in invalid format. Use , to separate values and - to indicate a range."<<std::endl;
+							return 0;
+						}
+					}
+					cpu.execute(filename,regs);
+				}
+				else
+				{
+					while(true)
+					{
+						split=regnums.find(',');
+						temp = regnums.substr(0,split);
+						if(temp.find('-')!=std::string::npos)
+						{
+							try
+							{
+								for(int i = std::stoi(regnums.substr(0,temp.find('-')));i<(std::stoi(regnums.substr(temp.find('-')+1)))+1;i++)
+								{
+									regs.push_back(i);
+								}
+							}
+							catch(const std::invalid_argument& e)
+							{
+								std::cout<<"Error 3: Register range specified in invalid format. Use , to separate values and - to indicate a range."<<std::endl;
+								return 0;
+							}
+						}
+						else
+						{
+							try
+							{
+								regs.push_back(std::stoi(temp));
+							}
+							catch(const std::invalid_argument& e)
+							{
+								std::cout<<"Error 4: Register range specified in invalid format. Use , to separate values and - to indicate a range."<<std::endl;
+								return 0;
+							}
+						}
+						regnums.erase(0,split+1);
+						if(regnums.find(',')==std::string::npos)
+						{
+							if(loop)
+							{
+								break;
+							}
+							else
+							{
+								loop=true;
+							}
+						}
+						
+					}
+					cpu.execute(filename,regs);
+				}
+
+			}
+			else
+			{
+				cpu.execute();
+			}
+		}
+		else
+		{
+			cpu.execute();
+		}
 	}
 	
 	return 0;
