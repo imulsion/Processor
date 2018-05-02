@@ -16,11 +16,12 @@ class CPU
 		Memory mem;//RAM module
 		std::array<Byte,2> pc;//Program counter
 		std::stack<std::array<Byte,2>> stack;//call stack for branching
+		int cyclecount;
 		
 	public:
 		CPU();//constructor
 		const bool loadProgram(std::string*);//load machine code file to memory
-		const bool execute(std::string fname="",std::optional<std::vector<int>> regnums={});//execute stored program
+		const bool execute(std::string fname="",std::optional<std::vector<int>> regnums={},int num_cycles=-1);//execute stored program
 		//update/clear status register - called once per cycle
 		void updateSREG(Byte*,Byte*,bool);
 		void clearSREG();

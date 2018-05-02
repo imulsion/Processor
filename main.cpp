@@ -14,6 +14,7 @@ int main(int argc, char* argv[])
 	}
 	std::string filename(argv[1]);
 	std::ifstream infile;
+	int num_cycles=-1;
 	infile.open(filename);
 	if(!infile)
 	{
@@ -70,6 +71,19 @@ int main(int argc, char* argv[])
 					std::cout<<"Error: Debug mode selected but register range not specified"<<std::endl;
 					return 0;
 				}
+				if(argc==5)
+				{
+					try
+					{
+						num_cycles=std::stoi(std::string(argv[4]));
+					}
+					catch(const std::invalid_argument& e)
+					{
+						std::cout<<"Error: Cycle numbers incorrectly specified."<<std::endl;
+						return 0;
+					}
+				}
+				
 				std::string regnums(argv[3]);
 				if(regnums.find(',')==std::string::npos)
 				{
@@ -101,7 +115,7 @@ int main(int argc, char* argv[])
 							return 0;
 						}
 					}
-					cpu.execute(filename,regs);
+					cpu.execute(filename,regs,num_cycles);
 				}
 				else
 				{
@@ -150,7 +164,7 @@ int main(int argc, char* argv[])
 						}
 						
 					}
-					cpu.execute(filename,regs);
+					cpu.execute(filename,regs,num_cycles);
 				}
 
 			}

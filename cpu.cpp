@@ -10,6 +10,7 @@ CPU::CPU()
 	pc[0]=Byte(0);
 	pc[1]=Byte(0);
 	registers[31]=Byte(0);
+	cyclecount=1;
 }
 
 const bool CPU::loadProgram(std::string* dataptr)
@@ -50,7 +51,7 @@ const bool CPU::loadProgram(std::string* dataptr)
 	return true;//load successful
 }
 
-const bool CPU::execute(std::string filename,std::optional<std::vector<int>> regnums)
+const bool CPU::execute(std::string filename,std::optional<std::vector<int>> regnums,int num_cycles)
 {
 	std::optional<std::ofstream> debugwriter={};
 	if(regnums.has_value())
@@ -110,34 +111,6 @@ const bool CPU::execute(std::string filename,std::optional<std::vector<int>> reg
 		arg2[0].setData({0,0,0,cInstr[2][3],cInstr[2][4],cInstr[2][5],cInstr[2][6],cInstr[2][7]});
 		arg2[1].setData({cInstr[3][0],cInstr[3][1],cInstr[3][2],cInstr[3][3],cInstr[3][4],cInstr[3][5],cInstr[3][6],cInstr[3][7]});
 		
-		
-		if(regnums.has_value())
-		{
-			debugwriter.value()<<"On instruction "<<pc[1].toInt(1)+1<<":\n";
-			debugwriter.value()<<"Data: \n";
-			for(int i = 0;i<regnums.value().size();i++)
-			{
-				if(regnums.value()[i]>9)
-				{
-					debugwriter.value()<<"R"<<regnums.value()[i]<<": ";
-				}
-				else
-				{
-					debugwriter.value()<<"R"<<regnums.value()[i]<<":  ";
-				}
-				for(int j = 0;j<8;j++)
-				{
-					debugwriter.value()<<registers[regnums.value()[i]][j];
-				}
-				debugwriter.value()<<"\n";
-			}
-			debugwriter.value()<<"Status register: ";
-			for(int j = 0;j<8;j++)
-			{
-				debugwriter.value()<<registers[31][j];
-			}
-			debugwriter.value()<<"\n\n";
-		}
 		
 		
 		/*
@@ -479,6 +452,35 @@ const bool CPU::execute(std::string filename,std::optional<std::vector<int>> reg
 		}
 		
 		
+		if(regnums.has_value()&&((cyclecount<=num_cycles)||(num_cycles==-1)))
+		{
+			debugwriter.value()<<"Executed instruction "<<pc[0].toInt(0)+pc[1].toInt(1)+1<<":\n";
+			debugwriter.value()<<"Data: \n";
+			for(int i = 0;i<regnums.value().size();i++)
+			{
+				if(regnums.value()[i]>9)
+				{
+					debugwriter.value()<<"R"<<regnums.value()[i]<<": ";
+				}
+				else
+				{
+					debugwriter.value()<<"R"<<regnums.value()[i]<<":  ";
+				}
+				for(int j = 0;j<8;j++)
+				{
+					debugwriter.value()<<registers[regnums.value()[i]][j];
+				}
+				debugwriter.value()<<"\n";
+			}
+			debugwriter.value()<<"Status register: ";
+			for(int j = 0;j<8;j++)
+			{
+				debugwriter.value()<<registers[31][j];
+			}
+			debugwriter.value()<<"\n\n";
+		}
+		
+		
 		if(!isRunning)
 		{
 			//terminate program if RET called and stack empty
@@ -492,6 +494,7 @@ const bool CPU::execute(std::string filename,std::optional<std::vector<int>> reg
 			pc[1].setCarry(false);
 			pc[0]=pc[0]+1;
 		}
+		cyclecount++;
 	}
 
 }

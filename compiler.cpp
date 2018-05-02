@@ -764,10 +764,6 @@ int main(int argc, char* argv[])
 				if(labels[i]==args)
 				{
 					matchfound=true;
-					//DEBUG 
-					std::cout<<labels[i]<<std::endl;
-					std::cout<<labelnumbers[i]<<std::endl;
-					//END
 					int num = labelnumbers[i];
 					for(int i = 0;i<8;i++)
 					{

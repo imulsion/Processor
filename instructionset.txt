@@ -40,6 +40,17 @@
 	
 	#######################################################################################
 	
+	PROCESSOR COMMAND LINE PARAMETERS:
+	main <filename> -debug <registers> <max_cycles>
+	
+	#Filename: Name of .sbf program to run
+	#-debug: enable debug mode (optional)
+	#registers: Used when debug mode active (mandatory). Specifies which registers will be logged, e.g. 0,3,4-6,8-10 will log R0,R3,R4,R5,R6,R8,R9 and R10
+	#max_cycles: Used when debug mode active (optional). Specifies how many program cycles to log in order to limit log file size. Large programs will create enormous log files if all cycles are logged, so use max_cycles to limit log size.
+
+	
+	#######################################################################################
+	
 	Example usage: Print all the square numbers up to 99^2
 	
 	MOVI R0,0 ; count variable
