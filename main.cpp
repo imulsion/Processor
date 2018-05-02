@@ -6,15 +6,26 @@ int main(int argc, char* argv[])
 {
 	
 	CPU cpu;
-	std::cout<<"Welcome to Stafford King's processor emulation! Please type the file name (ending in .sbf) of the program you'd like to run! Or type \"exit\" to exit."<<std::endl;
-	std::string filename;
+	//std::cout<<"Welcome to Stafford King's processor emulation! Please type the file name (ending in .sbf) of the program you'd like to run! Or type \"exit\" to exit."<<std::endl;
+	if(argc<2)
+	{
+		std::cout<<"Error: no input files"<<std::endl;
+		return 0;
+	}
+	std::string filename(argv[1]);
 	std::ifstream infile;
+	infile.open(filename);
+	if(!infile)
+	{
+		std::cout<<"Error: Program couldn't be read. Check the filename and try again."<<std::endl;
+		return 0;
+	}
 	std::string cleaneddata="";
 	std::size_t split;
 	std::vector<int> regs;
 	std::string temp;
 	bool loop=false;
-	
+	/*
 	while(true)//loop input data
 	{
 		std::getline(std::cin,filename);
@@ -34,6 +45,7 @@ int main(int argc, char* argv[])
 			break;//file found, break
 		}
 	}
+	*/
 	std::string progdata((std::istreambuf_iterator<char>(infile)),(std::istreambuf_iterator<char>()));//iterate through filestream and place contents of file in string
 	for(int i = 0;i<progdata.length();i++)
 	{
@@ -48,17 +60,17 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		if(argc>1)
+		if(argc>2)
 		{
-			std::string dcheck(argv[1]);//enable debug mode?
+			std::string dcheck(argv[2]);//enable debug mode?
 			if(dcheck == "-debug")
 			{
-				if(argc==2)
+				if(argc==3)
 				{
 					std::cout<<"Error: Debug mode selected but register range not specified"<<std::endl;
 					return 0;
 				}
-				std::string regnums(argv[2]);
+				std::string regnums(argv[3]);
 				if(regnums.find(',')==std::string::npos)
 				{
 					if(regnums.find('-')==std::string::npos)
@@ -78,7 +90,7 @@ int main(int argc, char* argv[])
 						split = regnums.find('-');
 						try
 						{
-							for(int i = std::stoi(regnums.substr(0,split));i<std::stoi(regnums.substr(split));i++)
+							for(int i = std::stoi(regnums.substr(0,split));i<(std::stoi(regnums.substr(split+1)))+1;i++)
 							{
 								regs.push_back(i);
 							}
