@@ -1,0 +1,52 @@
+MOVI R0,114
+MOVI R1,39
+MOVI R2,0 ;count
+MOVI R3,1 ;mask
+MOVI R4,0 ;result
+MOVI R7,0 ;carry
+MOVI R15,128 ;OR mask for setting bits
+
+loop:
+MOV R5,R0
+MOV R6,R1
+AND R5,R3 ;mask LSB
+AND R6,R3 ;mask LSB
+
+;sum
+MOV R8,R5
+MOV R9,R6
+NOT R8
+NOT R9
+AND R8,R6
+AND R9,R5
+OR R8,R9
+MOV R16,R8 ;copy result of first XOR for carry
+MOV R17,R7 ;copy carry in for carry
+MOV R10,R7
+NOT R10
+MOV R11,R8
+NOT R11
+AND R8,R10
+AND R7,R11
+OR R8,R7
+SBRN R8,7
+OR R4,R15
+CPI R2,7
+BREQ skipshift
+ASR R4,1
+
+skipshift:
+;carry
+AND R5,R6
+AND R16,R17
+OR R5,R16
+MOV R7,R5
+ASR R0,1
+ASR R1,1
+INC R2
+CPI R2,8
+BNE loop
+
+PRNT R4,1
+RET
+

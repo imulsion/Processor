@@ -634,7 +634,7 @@ int main(int argc, char* argv[])
 			}
 			catch(std::invalid_argument& e)
 			{
-				std::cerr<<"Error on line "<<linecount<<":: Invalid argument"<<std::endl;
+				std::cerr<<"Error on line "<<linecount<<": Invalid argument"<<std::endl;
 				return 0;
 			}
 			if(num==3)//if arg1 is an immediate
@@ -643,7 +643,7 @@ int main(int argc, char* argv[])
 				std::string temp = decodeArg(arg1,false);
 				if(temp=="")//if argument parsing failed
 				{
-					std::cout<<"Error on line "<<linecount<<":: Invalid argument"<<std::endl;
+					std::cout<<"Error on line "<<linecount<<": Invalid argument"<<std::endl;
 					return 0;
 				}
 				result+="00000";

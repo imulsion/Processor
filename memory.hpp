@@ -3,7 +3,7 @@
 
 #include <array>
 #include <optional>//C++ 17 feature - will NOT compile without C++ 17 support
-#include "byte.h"
+#include "byte.hpp"
 class Memory
 {
 	private:

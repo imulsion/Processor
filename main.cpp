@@ -1,4 +1,4 @@
-#include "cpu.h"
+#include "cpu.hpp"
 
 
 
@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
 {
 	
 	CPU cpu;
-	//std::cout<<"Welcome to Stafford King's processor emulation! Please type the file name (ending in .sbf) of the program you'd like to run! Or type \"exit\" to exit."<<std::endl;
+	
 	if(argc<2)
 	{
 		std::cout<<"Error: no input files"<<std::endl;
@@ -26,27 +26,6 @@ int main(int argc, char* argv[])
 	std::vector<int> regs;
 	std::string temp;
 	bool loop=false;
-	/*
-	while(true)//loop input data
-	{
-		std::getline(std::cin,filename);
-		if(filename=="exit")
-		{
-			return 0;
-		}
-		infile.open(filename);
-		if(!infile)//file can't be opened...
-		{
-			std::cout<<std::endl;
-			std::cout<<"Error: File is either unreadable or does not exist. Check that the filename is correct."<<std::endl;
-			std::cout<<"Type the name again to retry, or type \"exit\" to exit."<<std::endl;
-		}
-		else
-		{
-			break;//file found, break
-		}
-	}
-	*/
 	std::string progdata((std::istreambuf_iterator<char>(infile)),(std::istreambuf_iterator<char>()));//iterate through filestream and place contents of file in string
 	for(int i = 0;i<progdata.length();i++)
 	{
@@ -66,12 +45,12 @@ int main(int argc, char* argv[])
 			std::string dcheck(argv[2]);//enable debug mode?
 			if(dcheck == "-debug")
 			{
-				if(argc==3)
+				if(argc==3)//no registers specified
 				{
 					std::cout<<"Error: Debug mode selected but register range not specified"<<std::endl;
 					return 0;
 				}
-				if(argc==5)
+				if(argc==5)//enable cycle limit
 				{
 					try
 					{
@@ -83,11 +62,11 @@ int main(int argc, char* argv[])
 						return 0;
 					}
 				}
-				
+				//parse register selection string
 				std::string regnums(argv[3]);
-				if(regnums.find(',')==std::string::npos)
+				if(regnums.find(',')==std::string::npos)//only one range
 				{
-					if(regnums.find('-')==std::string::npos)
+					if(regnums.find('-')==std::string::npos)//no range, only a value
 					{
 						try
 						{
@@ -106,7 +85,7 @@ int main(int argc, char* argv[])
 						{
 							for(int i = std::stoi(regnums.substr(0,split));i<(std::stoi(regnums.substr(split+1)))+1;i++)
 							{
-								regs.push_back(i);
+								regs.push_back(i);//loop through a range x-y starting at x and ending at y
 							}
 						}
 						catch(const std::invalid_argument& e)
@@ -122,14 +101,15 @@ int main(int argc, char* argv[])
 					while(true)
 					{
 						split=regnums.find(',');
-						temp = regnums.substr(0,split);
+						temp = regnums.substr(0,split);//substr all text up to the first comma
+						//parse as usual...
 						if(temp.find('-')!=std::string::npos)
 						{
 							try
 							{
 								for(int i = std::stoi(regnums.substr(0,temp.find('-')));i<(std::stoi(regnums.substr(temp.find('-')+1)))+1;i++)
 								{
-									regs.push_back(i);
+									regs.push_back(i);//loop through range
 								}
 							}
 							catch(const std::invalid_argument& e)
@@ -142,7 +122,7 @@ int main(int argc, char* argv[])
 						{
 							try
 							{
-								regs.push_back(std::stoi(temp));
+								regs.push_back(std::stoi(temp));//not a range, so just push back number
 							}
 							catch(const std::invalid_argument& e)
 							{
@@ -150,32 +130,33 @@ int main(int argc, char* argv[])
 								return 0;
 							}
 						}
-						regnums.erase(0,split+1);
-						if(regnums.find(',')==std::string::npos)
+						regnums.erase(0,split+1);//erase up to and including first comma
+						if(regnums.find(',')==std::string::npos)//no commas left?
 						{
-							if(loop)
+							if(loop)//have we been here before?
 							{
-								break;
+								break;//if yes, break as all values parsed
 							}
 							else
 							{
-								loop=true;
+								loop=true;//if no, loop once more to parse final value with no commas
 							}
 						}
 						
 					}
-					cpu.execute(filename,regs,num_cycles);
+					cpu.execute(filename,regs,num_cycles);//all parsing done hooray, let's execute
 				}
 
 			}
-			else
+			else//weird flag, probably spelled wrong
 			{
-				cpu.execute();
+				std::cout<<"Error: Unrecognised flag "+dcheck<<std::endl;
+				return 0;
 			}
 		}
 		else
 		{
-			cpu.execute();
+			cpu.execute();//execute without debug
 		}
 	}
 	

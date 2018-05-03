@@ -1,0 +1,56 @@
+Executed instruction 1:
+Data: 
+R0:  00001000
+R1:  00000000
+R2:  00000000
+Status register: 00000000
+
+Executed instruction 2:
+Data: 
+R0:  00001000
+R1:  00001000
+R2:  00000000
+Status register: 00000000
+
+Executed instruction 3:
+Data: 
+R0:  00001000
+R1:  00001000
+R2:  00000010
+Status register: 00000000
+
+Executed instruction 4:
+Data: 
+R0:  00001000
+R1:  00000100
+R2:  00000010
+Status register: 00000000
+
+Executed instruction 5:
+Data: 
+R0:  00001001
+R1:  00000100
+R2:  00000010
+Status register: 00000000
+
+Executed instruction 6:
+Data: 
+R0:  00001001
+R1:  00100100
+R2:  00000000
+Status register: 00000000
+
+Executed instruction 7:
+Data: 
+R0:  00001001
+R1:  00100100
+R2:  00000000
+Status register: 00000000
+
+Executed instruction 8:
+Data: 
+R0:  00001001
+R1:  00100100
+R2:  00000000
+Status register: 00000000
+

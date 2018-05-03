@@ -1,7 +1,7 @@
 #ifndef CPU_H//header guard
 #define CPU_H
-#include "memory.h"
-#include "byte.h"
+#include "memory.hpp"
+#include "byte.hpp"
 #include <stack>
 #include <vector>
 #include <algorithm>
@@ -16,7 +16,7 @@ class CPU
 		Memory mem;//RAM module
 		std::array<Byte,2> pc;//Program counter
 		std::stack<std::array<Byte,2>> stack;//call stack for branching
-		int cyclecount;
+		int cyclecount;//optional number of cycles to log
 		
 	public:
 		CPU();//constructor

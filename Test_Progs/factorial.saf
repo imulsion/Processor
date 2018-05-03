@@ -1,0 +1,14 @@
+MOVI R0,5
+MOV R2,R0
+CALL factorial
+PRNT R0,2
+RET
+
+factorial:
+DEC R2
+CPI R2,1
+SBRS R31,0
+RET
+MUL R0,R2
+CALL factorial
+RET

@@ -1,4 +1,4 @@
-#include "byte.h"
+#include "byte.hpp"
 
 Byte::Byte()
 {
@@ -321,71 +321,64 @@ Byte Byte::operator/(Byte x)
 {
 	Byte count(0);
 	Byte div = *this;
-	bool sign=div[0];//sign bit
 	while(true)
 	{
-		div=div-x;
-		if(sign==0&&div[0]==1)//check MSB to see if <0
+		if(div[0])
 		{
-			break;
+			div.setCarryIn(true);
+			div=div-x;
+			count=count+1;
 		}
 		else
 		{
-			sign = div[0];
-			count=count+1;
+			if(div==x)
+			{
+				return count+1;
+			}
+			else if(x>div)
+			{
+				return count;
+			}
+			else
+			{
+				div.setCarryIn(true);
+				div=div-x;
+				count=count+1;
+			}
 		}
 	}
+	
 	return count;
 }
-
-/*
-Byte Byte::operator/(Byte x)
-{
-	Byte remainder(0);
-	Byte quotient(0);
-	int j;
-	for(j = 0;j<8;j++)
-	{
-		if(data[j])
-		{
-			break;
-		}
-	}
-	for(int i = 7-j;i>=0;i--)
-	{
-		remainder<<1;
-		if(data[7-i])
-		{
-			remainder = remainder|Byte(1);
-		}
-		if(remainder>x||remainder==x)
-		{
-			remainder=remainder-x;
-			quotient=quotient|Byte(pow(2,i));
-		}
-	}
-	return quotient;
-}*/
 
 //same as above but outputs remainder
 Byte Byte::operator%(Byte x)
 {
-	Byte temp(0);
-	bool sign = data[0];
+	Byte mod = *this;
 	while(true)
 	{
-		*this=*this-x;
-		if(sign==0&&data[0]==1)
+		if(mod[0])
 		{
-			break;
+			mod.setCarryIn(true);
+			mod=mod-x;
 		}
 		else
 		{
-			temp=*this;
-			sign = data[0];
+			if(mod==x)
+			{
+				return Byte(0);
+			}
+			else if(x>mod)
+			{
+				return mod;
+			}
+			else
+			{
+				mod.setCarryIn(true);
+				mod=mod-x;
+			}
 		}
 	}
-	return temp;
 }
 
 //carry getters/setters

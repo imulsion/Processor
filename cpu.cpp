@@ -1,4 +1,4 @@
-#include "cpu.h"
+#include "cpu.hpp"
 
 CPU::CPU()
 {
@@ -53,11 +53,11 @@ const bool CPU::loadProgram(std::string* dataptr)
 
 const bool CPU::execute(std::string filename,std::optional<std::vector<int>> regnums,int num_cycles)
 {
-	std::optional<std::ofstream> debugwriter={};
+	std::optional<std::ofstream> debugwriter={};//optional file writer - optional since it's only used in debug mode
 	if(regnums.has_value())
 	{
-		std::sort(regnums.value().begin(),regnums.value().end());
-		debugwriter=std::ofstream(filename+".log");
+		std::sort(regnums.value().begin(),regnums.value().end());//sort register numbers in ascending order
+		debugwriter=std::ofstream(filename+".log");//write a file with .log appended
 	}
 	
 	
@@ -308,6 +308,7 @@ const bool CPU::execute(std::string filename,std::optional<std::vector<int>> reg
 				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 22://DEC - decrement
+				registers[arg1[1].toInt(1)].setCarryIn(true);
 				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]-1;
 				optype=false;
 				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
@@ -452,13 +453,14 @@ const bool CPU::execute(std::string filename,std::optional<std::vector<int>> reg
 		}
 		
 		
-		if(regnums.has_value()&&((cyclecount<=num_cycles)||(num_cycles==-1)))
+		if(regnums.has_value()&&((cyclecount<=num_cycles)||(num_cycles==-1)))//check for debug and logging cycle
 		{
-			debugwriter.value()<<"Executed instruction "<<pc[0].toInt(0)+pc[1].toInt(1)+1<<":\n";
+			debugwriter.value()<<"Executed instruction "<<pc[0].toInt(0)+pc[1].toInt(1)+1<<":\n";//Print current instruction number
 			debugwriter.value()<<"Data: \n";
 			for(int i = 0;i<regnums.value().size();i++)
 			{
-				if(regnums.value()[i]>9)
+				//print out specified register contents
+				if(regnums.value()[i]>9)//format registers so they're in a line
 				{
 					debugwriter.value()<<"R"<<regnums.value()[i]<<": ";
 				}
@@ -468,10 +470,11 @@ const bool CPU::execute(std::string filename,std::optional<std::vector<int>> reg
 				}
 				for(int j = 0;j<8;j++)
 				{
-					debugwriter.value()<<registers[regnums.value()[i]][j];
+					debugwriter.value()<<registers[regnums.value()[i]][j];//print data
 				}
-				debugwriter.value()<<"\n";
+				debugwriter.value()<<"\n";//newline
 			}
+			//print status register
 			debugwriter.value()<<"Status register: ";
 			for(int j = 0;j<8;j++)
 			{
@@ -484,6 +487,10 @@ const bool CPU::execute(std::string filename,std::optional<std::vector<int>> reg
 		if(!isRunning)
 		{
 			//terminate program if RET called and stack empty
+			if(debugwriter.has_value())
+			{
+				debugwriter.value().close();//close filestream if used
+			}
 			return true;
 		}
 		
@@ -494,7 +501,7 @@ const bool CPU::execute(std::string filename,std::optional<std::vector<int>> reg
 			pc[1].setCarry(false);
 			pc[0]=pc[0]+1;
 		}
-		cyclecount++;
+		cyclecount++;//next cycle
 	}
 
 }
