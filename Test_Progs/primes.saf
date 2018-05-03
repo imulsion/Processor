@@ -1,3 +1,12 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Showcase program 2: This program prints out all the primes numbers up to 997.     ;
+;It is essentially composed of two nested loops, where the outer loop counts to    ;
+;1000 and the inner loop divides the current count by every number up to count/2.  ;
+;If no numbers up to count/2 divide exactly, then the number is prime. It also only;
+;tests odd numbers for obvious reasons, and the inner loop count starts at 3 each  ;
+;time as 2 will not divide into an odd number.									   ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 PRNT 2,3
 PRNT 3,3 ;2 and 3 are both primes
 MOVI R0,5

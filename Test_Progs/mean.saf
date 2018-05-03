@@ -1,3 +1,9 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;This program was intended to test the DIV instruction.;
+;It sums together a dataset of 8 numbers and calculates;
+;the mean of the data.								   ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 MOVI R0,4
 MOVI R1,15
 MOVI R2,12

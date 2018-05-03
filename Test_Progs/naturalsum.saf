@@ -1,3 +1,9 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;This program is another test of the DIV instruction.;
+;It calculates the sum of the first n (stored in R0) ;
+;natural numbers using the formula (n(n+1))/2		 ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 MOVI R0,8
 MOV R1,R0
 MOVI R2,2

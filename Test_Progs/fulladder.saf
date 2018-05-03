@@ -1,3 +1,10 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;This program is an example of "the emulation inside the emulation" as it;
+;uses the processor's logic functions to emulate a logical full adder.   ;
+;It will add together the 8 bit numbers in R0 and R1 to produce an 8 bit ;  
+;output. 	 															 ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 MOVI R0,114
 MOVI R1,39
 MOVI R2,0 ;count

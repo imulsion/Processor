@@ -1,3 +1,8 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;This program demonstrates the RAM functionality by storing 8 numbers;
+;in an "array", then retrieving them one by one to add them together.;
+;The modulus of the result and 17 is then calculated.                ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 MOVI R0,135
 MOVI R1,8
 MOVI R2,67

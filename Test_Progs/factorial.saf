@@ -1,3 +1,10 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;This program demonstrates the CALL instruction and the effectiveness of the stack by ;
+;using a recursive function to calculate 5 factorial. Note this program will need to  ;
+;be modified to calculate larger factorials as the MUL instruction can only take 8 bit;
+;arguments.																			  ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 MOVI R0,5
 MOV R2,R0
 CALL factorial
