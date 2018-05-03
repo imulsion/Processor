@@ -337,7 +337,7 @@ const bool CPU::execute(std::string filename,std::optional<std::vector<int>> reg
 				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;
 			case 25://MOD - 8-bit modulus operator
-				registers[arg1[1].toInt(1)]=registers[arg2[1].toInt(1)]%registers[arg1[1].toInt(1)];
+				registers[arg1[1].toInt(1)]=registers[arg1[1].toInt(1)]%registers[arg2[1].toInt(1)];
 				optype=false;
 				updateSREG(&registers[arg1[1].toInt(1)],&registers[arg1[1].toInt(1)+1],optype);
 				break;

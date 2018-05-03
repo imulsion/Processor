@@ -1,0 +1,467 @@
+Executed instruction 1:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 2:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 3:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 26:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 27:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 4:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 5:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 26:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 27:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 6:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 7:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 26:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 27:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 8:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 9:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 26:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 27:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 10:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 11:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 26:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 27:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 12:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 13:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 26:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 27:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 14:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 15:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 26:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 27:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 16:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 17:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 26:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 27:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 18:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 19:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 29:
+Data: 
+R3:  00000000
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 30:
+Data: 
+R3:  01000011
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 31:
+Data: 
+R3:  01000011
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 32:
+Data: 
+R3:  01000011
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 33:
+Data: 
+R3:  01000011
+R9:  00000000
+Status register: 10000000
+
+Executed instruction 29:
+Data: 
+R3:  01000011
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 30:
+Data: 
+R3:  01100101
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 31:
+Data: 
+R3:  01100101
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 32:
+Data: 
+R3:  01100101
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 33:
+Data: 
+R3:  01100101
+R9:  00000000
+Status register: 10000000
+
+Executed instruction 29:
+Data: 
+R3:  01100101
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 30:
+Data: 
+R3:  01110101
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 31:
+Data: 
+R3:  01110101
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 32:
+Data: 
+R3:  01110101
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 33:
+Data: 
+R3:  01110101
+R9:  00000000
+Status register: 10000000
+
+Executed instruction 29:
+Data: 
+R3:  01110101
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 30:
+Data: 
+R3:  01110110
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 31:
+Data: 
+R3:  01110110
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 32:
+Data: 
+R3:  01110110
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 33:
+Data: 
+R3:  01110110
+R9:  00000000
+Status register: 10000000
+
+Executed instruction 29:
+Data: 
+R3:  01110110
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 30:
+Data: 
+R3:  10001011
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 31:
+Data: 
+R3:  10001011
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 32:
+Data: 
+R3:  10001011
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 33:
+Data: 
+R3:  10001011
+R9:  00000000
+Status register: 10000000
+
+Executed instruction 29:
+Data: 
+R3:  10001011
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 30:
+Data: 
+R3:  10011001
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 31:
+Data: 
+R3:  10011001
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 32:
+Data: 
+R3:  10011001
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 33:
+Data: 
+R3:  10011001
+R9:  00000000
+Status register: 10000000
+
+Executed instruction 29:
+Data: 
+R3:  10011001
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 30:
+Data: 
+R3:  10011110
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 31:
+Data: 
+R3:  10011110
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 32:
+Data: 
+R3:  10011110
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 33:
+Data: 
+R3:  10011110
+R9:  00000000
+Status register: 10000000
+
+Executed instruction 29:
+Data: 
+R3:  10011110
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 30:
+Data: 
+R3:  10101101
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 31:
+Data: 
+R3:  10101101
+R9:  00000000
+Status register: 01000000
+
+Executed instruction 32:
+Data: 
+R3:  10101101
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 33:
+Data: 
+R3:  10101101
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 34:
+Data: 
+R3:  10101101
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 20:
+Data: 
+R3:  10101101
+R9:  00000000
+Status register: 00000000
+
+Executed instruction 21:
+Data: 
+R3:  10101101
+R9:  00000000
+Status register: 

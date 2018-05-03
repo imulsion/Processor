@@ -321,6 +321,22 @@ Byte Byte::operator/(Byte x)
 {
 	Byte count(0);
 	Byte div = *this;
+	
+	//check if x>div
+	for(int i = 0;i<8;i++)
+	{
+		if(x[i]!=div[i])
+		{
+			if(x[i])
+			{
+				return Byte(0);
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
 	while(true)
 	{
 		if(div[0])
@@ -355,6 +371,22 @@ Byte Byte::operator/(Byte x)
 Byte Byte::operator%(Byte x)
 {
 	Byte mod = *this;
+	
+	//check if x>mod
+	for(int i = 0;i<8;i++)
+	{
+		if(x[i]!=mod[i])
+		{
+			if(x[i])
+			{
+				return Byte(0);
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
 	while(true)
 	{
 		if(mod[0])
