@@ -20,6 +20,11 @@ const bool CPU::loadProgram(std::string* dataptr)
 		std::cout<<"Error: One or more program instructions is the wrong length! Current program length is "<<dataptr->length()<<std::endl;
 		return false;//load failed
 	}
+	if(dataptr->length()>16384)//more than 2048 bytes long
+	{
+		std::cout<<"Error: Program is too large and will not fit into available program memory."<<std::endl;
+		return false;//load failed
+	}
 	
 	std::array<bool,8> temp;
 	std::array<Byte,2> addresscounter={Byte(0),Byte(0)};//address counter - increment as bytes are written to write to new addresses

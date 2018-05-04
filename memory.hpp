@@ -35,7 +35,8 @@ class Memory
 		const Byte& readMDR() const;
 
 		/* 
-		Debug only functions - allow direct reading of SRAM. Used only for debugging purposes, do not emulate hardware
+		Debug only functions - allow direct reading of SRAM. 
+		Used only for debugging purposes, do not emulate hardware
 		const std::array<Byte,2>& readMAR() const;//ONLY use for debugging!
 		void readSomeData(int) const;//ONLY use for debugging!
 		*/
