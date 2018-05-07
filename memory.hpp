@@ -29,7 +29,7 @@ class Memory
 		void loadMDR();
 		
 		//interact with memory bus
-		void placeData(std::array<Byte,2>);
+		void placeData(const std::array<Byte,2>);
 		void removeData();
 		//read memory data register
 		const Byte& readMDR() const;

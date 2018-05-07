@@ -11,7 +11,7 @@ class CPU
 {
 	private:
 		std::array<Byte,32> registers;//CPU general purpose registers. registers[31] is the status register - DO NOT OVERWRITE
-		//status register: Format ZXCV: Zero[0],sign[1],carry[2]. Bits 3 through 7 are unused
+		//status register: Format ZXC: Zero[0],sign[1],carry[2]. Bits 3 through 7 are unused
 		
 		Memory mem;//RAM module
 		std::array<Byte,2> pc;//Program counter

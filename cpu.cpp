@@ -1,17 +1,7 @@
 #include "cpu.hpp"
 
-CPU::CPU()
-{
-	//clear all memory
-	for(int i=0;i<32;i++)
-	{
-		registers[i]=Byte(0);
-	}
-	pc[0]=Byte(0);
-	pc[1]=Byte(0);
-	registers[31]=Byte(0);
-	cyclecount=1;
-}
+CPU::CPU(): registers({Byte(0)}),cyclecount(1),pc({Byte(0)}){}
+
 
 const bool CPU::loadProgram(std::string* dataptr)
 {
@@ -102,13 +92,7 @@ const bool CPU::execute(std::string filename,std::optional<std::vector<int>> reg
 			wordAddress[1]=wordAddress[1]+1;
 		}
 		
-		/*
 		
-			;;;;;;;;;;;;;;;;;;;;;
-			;Decode cycle begins;
-			;;;;;;;;;;;;;;;;;;;;;
-			
-		*/
 		//construct opcode and argument Bytes from program memory data
 		opcode.setData({0,0,cInstr[0][0],cInstr[0][1],cInstr[0][2],cInstr[0][3],cInstr[0][4],cInstr[0][5]});
 		arg1[0].setData({0,0,0,cInstr[0][6],cInstr[0][7],cInstr[1][0],cInstr[1][1],cInstr[1][2]});
@@ -120,13 +104,13 @@ const bool CPU::execute(std::string filename,std::optional<std::vector<int>> reg
 		
 		/*
 		
-			;;;;;;;;;;;;;;;;;;;;;;
-			;Execute cycle begins;
-			;;;;;;;;;;;;;;;;;;;;;;
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;Decode, execute and write back cycle begins;
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			
 		*/
 		
-		switch(opcode.toInt(1))
+		switch(opcode.toInt(1))//decode instruction
 		{
 			case 0://MOV
 				registers[arg1[1].toInt(1)]=registers[arg2[1].toInt(1)];//only 32 registers so only need second half of address

@@ -1,17 +1,6 @@
 #include "memory.hpp"
 
-Memory::Memory()
-{
-	//initialise all memory to 0
-	mdr = Byte(0);
-	mar = {Byte(0),Byte(0)};
-	//set bus to high Z mode
-	bus[0]={};
-	bus[1]={};
-	//set active low control signals high
-	nCE=true;
-	nWE=true;
-}
+Memory::Memory(): mdr(Byte(0)),mar({Byte(0)}),bus({}),nCE(true),nWE(true){}
 
 //set chip enable
 void Memory::setCE(bool a)
@@ -48,7 +37,7 @@ void Memory::loadMAR()
 			bus[1] = ram[mar[0].toInt(0)+mar[1].toInt(1)];
 		}
 	}
-	else//shouldnt try to access bus in high Z - bus contention etc
+	else//shouldnt try to access bus in high Z
 	{
 		std::cout<<"Warning: Memory access violation: MAR attempted load from bus partially or fully in Z-mode! Incorrect signal path?"<<std::endl;
 	}
@@ -69,7 +58,7 @@ void Memory::loadMDR()
 }
 
 //place data on bus
-void Memory::placeData(std::array<Byte,2> m)
+void Memory::placeData(const std::array<Byte,2> m)
 {
 	bus[0]=m[0];
 	bus[1]=m[1];

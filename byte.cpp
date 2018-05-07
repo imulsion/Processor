@@ -1,24 +1,10 @@
 #include "byte.hpp"
 
-Byte::Byte()
-{
-	//set all data to 0
-	for(int i = 0;i<8;i++)
-	{
-		data[i]=false;
-	}
-	carrybit=false;
-	carryin=false;
-}
+Byte::Byte(): data({0}), carrybit(false), carryin(false){}
 
-Byte::Byte(std::array<bool,8> data)
-{
-	//construct object with supplied data
-	this->data = data;
-	carrybit=false;
-	carryin=false;
-}
-Byte::Byte(int x)//quick initialiser for data x such that -128<x<256
+Byte::Byte(std::array<bool, 8> data): data(data), carrybit(false), carryin(false){}
+
+Byte::Byte(int x): carryin(false),carrybit(false)//quick initialiser for data x such that -128<x<256
 {
 	if(x<128)//for signed numbers
 	{
@@ -58,8 +44,6 @@ Byte::Byte(int x)//quick initialiser for data x such that -128<x<256
 			}
 		}
 	}
-	carrybit=false;
-	carryin=false;
 }
 
 
